@@ -1,4 +1,4 @@
-package com.database.aula;
+package com.database.restaurante;
 
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;

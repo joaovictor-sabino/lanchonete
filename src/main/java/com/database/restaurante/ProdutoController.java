@@ -1,4 +1,4 @@
-package com.database.aula;
+package com.database.restaurante;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

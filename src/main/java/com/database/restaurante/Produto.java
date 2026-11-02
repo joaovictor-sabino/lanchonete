@@ -1,4 +1,4 @@
-package com.database.aula;
+package com.database.restaurante;
 
 import java.math.BigDecimal;
 import jakarta.persistence.Entity;

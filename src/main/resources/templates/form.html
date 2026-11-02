@@ -2,22 +2,33 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Cadastro de Aluno</title>
+    <title>Produto</title>
 </head>
 <body>
-    <h1>Cadastro de Aluno</h1>
+    <h1>Produto</h1>
 
-    <form th:action="@{/alunos/salvar}" th:object="${aluno}" method="post">
+    <form th:action="@{/admin/produtos/salvar}" th:object="${produto}" method="post">
         <input type="hidden" th:field="*{id}">
 
         <label>Nome:</label>
         <input type="text" th:field="*{nome}"><br><br>
 
-        <label>Curso:</label>
-        <input type="text" th:field="*{curso}"><br><br>
+        <label>Descrição:</label>
+        <input type="text" th:field="*{descricao}"><br><br>
+
+        <label>Preço:</label>
+        <input type="number" step="0.01" th:field="*{preco}"><br><br>
+
+        <label>Categoria:</label>
+        <select th:field="*{categoria}">
+            <option value="Hambúrguer">Hambúrguer</option>
+            <option value="Acompanhamento">Acompanhamento</option>
+            <option value="Bebida">Bebida</option>
+            <option value="Sobremesa">Sobremesa</option>
+        </select><br><br>
 
         <button type="submit">Salvar</button>
-        <a th:href="@{/alunos}">Cancelar</a>
+        <a th:href="@{/admin/produtos}">Cancelar</a>
     </form>
 </body>
 </html>

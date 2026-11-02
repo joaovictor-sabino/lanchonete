@@ -1,0 +1,43 @@
+
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Alunos</title>
+</head>
+<body>
+
+    <h1>Lista de Alunos</h1>
+
+    <form th:action="@{/alunos}" method="get">
+        <input type="text" name="busca" placeholder="Buscar por nome">
+        <button type="submit">Buscar</button>
+    </form>
+    <a th:href="@{/alunos/novo}">Novo aluno</a>
+<br><br>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Curso</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr th:each="aluno : ${alunos}">
+                <td th:text="${aluno.id}"></td>
+                <td th:text="${aluno.nome}"></td>
+                <td th:text="${aluno.curso}"></td>
+                <td><a th:href="@{/alunos/editar/{id}(id=${aluno.id})}">Editar</a>
+                    <form th:action="@{/alunos/excluir/{id}(id=${aluno.id})}" method="post" style="display:inline">
+                        <button type="submit">Excluir</button>
+                    </form></td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>

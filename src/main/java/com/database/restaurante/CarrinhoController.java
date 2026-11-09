@@ -78,4 +78,28 @@ public class CarrinhoController {
         getCarrinho(session).clear();
         return "redirect:/carrinho";
     }
+    @PostMapping("/carrinho/adicionar-varios")
+    public String adicionarVarios(@RequestParam Map<String, String> params, HttpSession session) {
+        for (Map.Entry<String, String> e : params.entrySet()) {
+            if (!e.getKey().startsWith("qtd_")) continue;
+
+            int quantidade;
+            try {
+                quantidade = Integer.parseInt(e.getValue());
+            } catch (NumberFormatException ex) {
+                continue;
+            }
+            if (quantidade < 1) continue;
+            if (quantidade > 20) quantidade = 20;
+
+            try {
+                Long id = Long.parseLong(e.getKey().substring(4));
+                service.buscarPorId(id); // garante que o produto existe
+                getCarrinho(session).merge(id, quantidade, Integer::sum);
+            } catch (IllegalArgumentException ex) {
+                // id inválido ou produto inexistente: ignora
+            }
+        }
+        return "redirect:/carrinho";
+}
 }

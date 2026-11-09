@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Cardápio</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #fff8f0; margin: 0; padding: 20px; }
+        body { font-family: Arial, sans-serif; background: #fff8f0; margin: 0; padding: 20px 20px 100px; }
         h1 { text-align: center; color: #b53a00; }
         h2 { color: #b53a00; border-bottom: 2px solid #b53a00; padding-bottom: 4px; }
         .lista { max-width: 800px; margin: 0 auto; }
@@ -15,10 +15,14 @@
         .nome { font-weight: bold; font-size: 18px; }
         .desc { color: #666; margin-top: 4px; }
         .preco { color: #b53a00; font-weight: bold; font-size: 18px; margin-top: 4px; }
-        .acao { display: flex; gap: 8px; align-items: center; }
-        .acao input { width: 60px; padding: 6px; font-size: 16px; }
-        .acao button { background: #b53a00; color: #fff; border: 0; padding: 8px 14px;
-                       border-radius: 6px; cursor: pointer; font-size: 16px; }
+        .qtd { display: flex; align-items: center; gap: 6px; }
+        .qtd button { width: 36px; height: 36px; border: 0; border-radius: 6px; background: #b53a00;
+                      color: #fff; font-size: 20px; cursor: pointer; }
+        .qtd input { width: 50px; padding: 6px; font-size: 16px; text-align: center; }
+        .barra { position: fixed; bottom: 0; left: 0; right: 0; background: #fff;
+                 box-shadow: 0 -2px 8px rgba(0,0,0,.15); padding: 12px; text-align: center; }
+        .barra button { background: #b53a00; color: #fff; border: 0; padding: 12px 24px;
+                        border-radius: 8px; font-size: 18px; cursor: pointer; }
         .carrinho { position: fixed; top: 16px; right: 16px; background: #b53a00; color: #fff;
                     padding: 10px 16px; border-radius: 20px; text-decoration: none; font-weight: bold; }
         .vazio { color: #999; font-style: italic; }
@@ -29,40 +33,56 @@
 
     <h1>🍔 Nosso Cardápio</h1>
 
-    <div class="lista">
+    <form th:action="@{/carrinho/adicionar-varios}" method="post">
+        <div class="lista">
 
-        <h2>🍔 Comidas</h2>
-        <p class="vazio" th:if="${#lists.isEmpty(comidas)}">Nenhuma comida cadastrada.</p>
-        <div class="item" th:each="p : ${comidas}">
-            <div>
-                <div class="nome" th:text="${p.nome}"></div>
-                <div class="desc" th:text="${p.descricao}"></div>
-                <div class="preco"
-                     th:text="${p.preco != null} ? 'R$ ' + ${#numbers.formatDecimal(p.preco, 1, 'POINT', 2, 'COMMA')} : ''"></div>
+            <h2>🍔 Comidas</h2>
+            <p class="vazio" th:if="${#lists.isEmpty(comidas)}">Nenhuma comida cadastrada.</p>
+            <div class="item" th:each="p : ${comidas}">
+                <div>
+                    <div class="nome" th:text="${p.nome}"></div>
+                    <div class="desc" th:text="${p.descricao}"></div>
+                    <div class="preco"
+                         th:text="${p.preco != null} ? 'R$ ' + ${#numbers.formatDecimal(p.preco, 1, 'POINT', 2, 'COMMA')} : ''"></div>
+                </div>
+                <div class="qtd">
+                    <button type="button" onclick="mudar(this, -1)">−</button>
+                    <input type="number" th:name="'qtd_' + ${p.id}" value="0" min="0" max="20">
+                    <button type="button" onclick="mudar(this, 1)">+</button>
+                </div>
             </div>
-            <form class="acao" th:action="@{/carrinho/adicionar}" method="post">
-                <input type="hidden" name="id" th:value="${p.id}">
-                <input type="number" name="quantidade" value="1" min="1" max="20">
-                <button type="submit">Adicionar</button>
-            </form>
+
+            <h2>🥤 Bebidas</h2>
+            <p class="vazio" th:if="${#lists.isEmpty(bebidas)}">Nenhuma bebida cadastrada.</p>
+            <div class="item" th:each="p : ${bebidas}">
+                <div>
+                    <div class="nome" th:text="${p.nome}"></div>
+                    <div class="desc" th:text="${p.descricao}"></div>
+                    <div class="preco"
+                         th:text="${p.preco != null} ? 'R$ ' + ${#numbers.formatDecimal(p.preco, 1, 'POINT', 2, 'COMMA')} : ''"></div>
+                </div>
+                <div class="qtd">
+                    <button type="button" onclick="mudar(this, -1)">−</button>
+                    <input type="number" th:name="'qtd_' + ${p.id}" value="0" min="0" max="20">
+                    <button type="button" onclick="mudar(this, 1)">+</button>
+                </div>
+            </div>
+
         </div>
 
-        <h2>🥤 Bebidas</h2>
-        <p class="vazio" th:if="${#lists.isEmpty(bebidas)}">Nenhuma bebida cadastrada.</p>
-        <div class="item" th:each="p : ${bebidas}">
-            <div>
-                <div class="nome" th:text="${p.nome}"></div>
-                <div class="desc" th:text="${p.descricao}"></div>
-                <div class="preco"
-                     th:text="${p.preco != null} ? 'R$ ' + ${#numbers.formatDecimal(p.preco, 1, 'POINT', 2, 'COMMA')} : ''"></div>
-            </div>
-            <form class="acao" th:action="@{/carrinho/adicionar}" method="post">
-                <input type="hidden" name="id" th:value="${p.id}">
-                <input type="number" name="quantidade" value="1" min="1" max="20">
-                <button type="submit">Adicionar</button>
-            </form>
+        <div class="barra">
+            <button type="submit">Adicionar selecionados ao carrinho</button>
         </div>
+    </form>
 
-    </div>
+    <script>
+        function mudar(botao, delta) {
+            var campo = botao.parentElement.querySelector('input');
+            var novo = (parseInt(campo.value) || 0) + delta;
+            if (novo < 0) novo = 0;
+            if (novo > 20) novo = 20;
+            campo.value = novo;
+        }
+    </script>
 </body>
 </html>

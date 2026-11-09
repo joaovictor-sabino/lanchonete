@@ -38,11 +38,15 @@
             </thead>
             <tbody>
                 <tr th:each="item : ${itens}">
-                    <td th:text="${item.produto.nome}"></td>
+                    <td>
+                        <span th:text="${item.produto.nome}"></span>
+                        <strong th:if="${item.tamanho != 'U'}" th:text="'(' + ${item.tamanho} + ')'"></strong>
+                    </td>
                     <td th:text="${item.quantidade}"></td>
                     <td th:text="'R$ ' + ${#numbers.formatDecimal(item.subtotal, 1, 'POINT', 2, 'COMMA')}"></td>
                     <td>
-                        <form th:action="@{/carrinho/remover/{id}(id=${item.produto.id})}" method="post">
+                        <form th:action="@{/carrinho/remover}" method="post">
+                            <input type="hidden" name="chave" th:value="${item.chave}">
                             <button class="remover" type="submit">Remover</button>
                         </form>
                     </td>

@@ -42,11 +42,19 @@
                 <div>
                     <div class="nome" th:text="${p.nome}"></div>
                     <div class="desc" th:text="${p.descricao}"></div>
-                    <div class="preco"
-                         th:text="${p.preco != null} ? 'R$ ' + ${#numbers.formatDecimal(p.preco, 1, 'POINT', 2, 'COMMA')} : ''"></div>
+                        <div class="preco"
+                            th:if="${p.precoM == null and p.precoG == null}"
+                            th:text="${p.preco != null} ? 'R$ ' + ${#numbers.formatDecimal(p.preco, 1, 'POINT', 2, 'COMMA')} : ''"></div>
                 </div>
                 <div class="qtd">
-                    <button type="button" onclick="mudar(this, -1)">−</button>
+                    <select th:name="'tam_' + ${p.id}" th:if="${p.precoM != null or p.precoG != null}">
+                        <option value="P" th:text="'P - R$ ' + ${#numbers.formatDecimal(p.preco, 1, 'POINT', 2, 'COMMA')}"></option>
+                        <option value="M" th:if="${p.precoM != null}"
+                                th:text="'M - R$ ' + ${#numbers.formatDecimal(p.precoM, 1, 'POINT', 2, 'COMMA')}"></option>
+                        <option value="G" th:if="${p.precoG != null}"
+                                th:text="'G - R$ ' + ${#numbers.formatDecimal(p.precoG, 1, 'POINT', 2, 'COMMA')}"></option>
+                    </select>
+                    <button type="button" onclick="mudar(this, -1)">-</button>
                     <input type="number" th:name="'qtd_' + ${p.id}" value="0" min="0" max="20">
                     <button type="button" onclick="mudar(this, 1)">+</button>
                 </div>
@@ -58,11 +66,18 @@
                 <div>
                     <div class="nome" th:text="${p.nome}"></div>
                     <div class="desc" th:text="${p.descricao}"></div>
-                    <div class="preco"
-                         th:text="${p.preco != null} ? 'R$ ' + ${#numbers.formatDecimal(p.preco, 1, 'POINT', 2, 'COMMA')} : ''"></div>
+                    <div class="preco"th:if="${p.precoM == null and p.precoG == null}"
+                    th:text="${p.preco != null} ? 'R$ ' + ${#numbers.formatDecimal(p.preco, 1, 'POINT', 2, 'COMMA')} : ''"></div>
                 </div>
                 <div class="qtd">
-                    <button type="button" onclick="mudar(this, -1)">−</button>
+                    <select th:name="'tam_' + ${p.id}" th:if="${p.precoM != null or p.precoG != null}">
+                        <option value="P" th:text="'P - R$ ' + ${#numbers.formatDecimal(p.preco, 1, 'POINT', 2, 'COMMA')}"></option>
+                        <option value="M" th:if="${p.precoM != null}"
+                                th:text="'M - R$ ' + ${#numbers.formatDecimal(p.precoM, 1, 'POINT', 2, 'COMMA')}"></option>
+                        <option value="G" th:if="${p.precoG != null}"
+                                th:text="'G - R$ ' + ${#numbers.formatDecimal(p.precoG, 1, 'POINT', 2, 'COMMA')}"></option>
+                    </select>
+                    <button type="button" onclick="mudar(this, -1)">-</button>
                     <input type="number" th:name="'qtd_' + ${p.id}" value="0" min="0" max="20">
                     <button type="button" onclick="mudar(this, 1)">+</button>
                 </div>

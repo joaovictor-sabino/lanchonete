@@ -70,7 +70,7 @@ public class ProdutoController {
             .filter(p -> "Bebida".equalsIgnoreCase(p.getCategoria()))
             .toList());
 
-        Map<Long, Integer> carrinho = (Map<Long, Integer>) session.getAttribute("carrinho");
+        Map<String, Integer> carrinho = (Map<String, Integer>) session.getAttribute("carrinho");
         int totalItens = carrinho == null ? 0
             : carrinho.values().stream().mapToInt(Integer::intValue).sum();
         model.addAttribute("totalItens", totalItens);

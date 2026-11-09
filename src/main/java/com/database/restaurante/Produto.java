@@ -16,6 +16,8 @@ public class Produto {
     private String nome;
     private String descricao;
     private BigDecimal preco;
+    private BigDecimal precoM;
+    private BigDecimal precoG;
     private String categoria;
 
     public Produto() {}
@@ -31,6 +33,12 @@ public class Produto {
 
     public BigDecimal getPreco() { return preco; }
     public void setPreco(BigDecimal preco) { this.preco = preco; }
+
+    public BigDecimal getPrecoM() { return precoM; }
+    public void setPrecoM(BigDecimal precoM) { this.precoM = precoM; }
+
+    public BigDecimal getPrecoG() { return precoG; }
+    public void setPrecoG(BigDecimal precoG) { this.precoG = precoG; }
 
     public String getCategoria() { return categoria; }
     public void setCategoria(String categoria) { this.categoria = categoria; }

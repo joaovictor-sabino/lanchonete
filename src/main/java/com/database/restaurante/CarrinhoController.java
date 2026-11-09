@@ -9,7 +9,6 @@ import java.util.Map;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -25,8 +24,8 @@ public class CarrinhoController {
     }
 
     @SuppressWarnings("unchecked")
-    private Map<Long, Integer> getCarrinho(HttpSession session) {
-        Map<Long, Integer> carrinho = (Map<Long, Integer>) session.getAttribute("carrinho");
+    private Map<String, Integer> getCarrinho(HttpSession session) {
+        Map<String, Integer> carrinho = (Map<String, Integer>) session.getAttribute("carrinho");
         if (carrinho == null) {
             carrinho = new LinkedHashMap<>();
             session.setAttribute("carrinho", carrinho);
@@ -34,50 +33,14 @@ public class CarrinhoController {
         return carrinho;
     }
 
-    @PostMapping("/carrinho/adicionar")
-    public String adicionar(@RequestParam Long id,
-                            @RequestParam(defaultValue = "1") int quantidade,
-                            HttpSession session) {
-        if (quantidade < 1) quantidade = 1;
-        if (quantidade > 20) quantidade = 20;
-
-        service.buscarPorId(id); // garante que o produto existe
-        getCarrinho(session).merge(id, quantidade, Integer::sum);
-        return "redirect:/cardapio";
+    private String tamanhoValido(Produto p, String tam) {
+        boolean temTamanhos = p.getPrecoM() != null || p.getPrecoG() != null;
+        if (!temTamanhos) return "U";
+        if ("M".equals(tam) && p.getPrecoM() != null) return "M";
+        if ("G".equals(tam) && p.getPrecoG() != null) return "G";
+        return "P";
     }
 
-    @GetMapping("/carrinho")
-    public String ver(HttpSession session, Model model) {
-        List<ItemCarrinho> itens = new ArrayList<>();
-        BigDecimal total = BigDecimal.ZERO;
-
-        for (Map.Entry<Long, Integer> e : new ArrayList<>(getCarrinho(session).entrySet())) {
-            try {
-                ItemCarrinho item = new ItemCarrinho(service.buscarPorId(e.getKey()), e.getValue());
-                itens.add(item);
-                total = total.add(item.getSubtotal());
-            } catch (IllegalArgumentException ex) {
-                // produto foi excluído pelo administrador: tira do carrinho
-                getCarrinho(session).remove(e.getKey());
-            }
-        }
-
-        model.addAttribute("itens", itens);
-        model.addAttribute("total", total);
-        return "carrinho";
-    }
-
-    @PostMapping("/carrinho/remover/{id}")
-    public String remover(@PathVariable Long id, HttpSession session) {
-        getCarrinho(session).remove(id);
-        return "redirect:/carrinho";
-    }
-
-    @PostMapping("/carrinho/limpar")
-    public String limpar(HttpSession session) {
-        getCarrinho(session).clear();
-        return "redirect:/carrinho";
-    }
     @PostMapping("/carrinho/adicionar-varios")
     public String adicionarVarios(@RequestParam Map<String, String> params, HttpSession session) {
         for (Map.Entry<String, String> e : params.entrySet()) {
@@ -94,12 +57,47 @@ public class CarrinhoController {
 
             try {
                 Long id = Long.parseLong(e.getKey().substring(4));
-                service.buscarPorId(id); // garante que o produto existe
-                getCarrinho(session).merge(id, quantidade, Integer::sum);
+                Produto produto = service.buscarPorId(id);
+                String tam = tamanhoValido(produto, params.get("tam_" + id));
+                getCarrinho(session).merge(id + "-" + tam, quantidade, Integer::sum);
             } catch (IllegalArgumentException ex) {
                 // id inválido ou produto inexistente: ignora
             }
         }
         return "redirect:/carrinho";
-}
+    }
+
+    @GetMapping("/carrinho")
+    public String ver(HttpSession session, Model model) {
+        List<ItemCarrinho> itens = new ArrayList<>();
+        BigDecimal total = BigDecimal.ZERO;
+
+        for (Map.Entry<String, Integer> e : new ArrayList<>(getCarrinho(session).entrySet())) {
+            try {
+                String[] partes = e.getKey().split("-");
+                Produto produto = service.buscarPorId(Long.parseLong(partes[0]));
+                ItemCarrinho item = new ItemCarrinho(produto, partes[1], e.getValue());
+                itens.add(item);
+                total = total.add(item.getSubtotal());
+            } catch (IllegalArgumentException ex) {
+                getCarrinho(session).remove(e.getKey()); // produto excluído
+            }
+        }
+
+        model.addAttribute("itens", itens);
+        model.addAttribute("total", total);
+        return "carrinho";
+    }
+
+    @PostMapping("/carrinho/remover")
+    public String remover(@RequestParam String chave, HttpSession session) {
+        getCarrinho(session).remove(chave);
+        return "redirect:/carrinho";
+    }
+
+    @PostMapping("/carrinho/limpar")
+    public String limpar(HttpSession session) {
+        getCarrinho(session).clear();
+        return "redirect:/carrinho";
+    }
 }

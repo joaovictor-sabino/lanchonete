@@ -1,5 +1,8 @@
 package com.database.restaurante;
 
+import java.util.List;
+import java.util.Map;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,6 +10,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class ProdutoController {
@@ -55,9 +60,23 @@ public class ProdutoController {
         service.excluir(id);
         return "redirect:/admin/produtos";
     }
+    @SuppressWarnings("unchecked")
     @GetMapping("/cardapio")
-    public String cardapioPublico(Model model) {
-        model.addAttribute("produtos", service.listar());
+    public String CardapioPublico(Model model, HttpSession session) {
+        List<Produto> todos = service.listar();
+
+        model.addAttribute("comidas", todos.stream()
+            .filter(p -> !"Bebida".equalsIgnoreCase(p.getCategoria()))
+            .toList());
+        model.addAttribute("bebidas", todos.stream()
+            .filter(p -> "Bebida".equalsIgnoreCase(p.getCategoria()))
+            .toList());
+
+        Map<Long, Integer> carrinho = (Map<Long, Integer>) session.getAttribute("carrinho");
+        int totalItens = carrinho == null ? 0
+            : carrinho.values().stream().mapToInt(Integer::intValue).sum();
+        model.addAttribute("totalItens", totalItens);
+
         return "CardapioPublico";
     }
 }

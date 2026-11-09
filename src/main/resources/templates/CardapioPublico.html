@@ -7,26 +7,62 @@
     <style>
         body { font-family: Arial, sans-serif; background: #fff8f0; margin: 0; padding: 20px; }
         h1 { text-align: center; color: #b53a00; }
+        h2 { color: #b53a00; border-bottom: 2px solid #b53a00; padding-bottom: 4px; }
         .lista { max-width: 800px; margin: 0 auto; }
         .item { background: #fff; border-radius: 10px; padding: 16px; margin-bottom: 12px;
-                box-shadow: 0 2px 6px rgba(0,0,0,.1); display: flex; justify-content: space-between; }
+                box-shadow: 0 2px 6px rgba(0,0,0,.1); display: flex;
+                justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
         .nome { font-weight: bold; font-size: 18px; }
         .desc { color: #666; margin-top: 4px; }
-        .preco { color: #b53a00; font-weight: bold; font-size: 18px; white-space: nowrap; }
-        .cat { font-size: 12px; color: #999; text-transform: uppercase; }
+        .preco { color: #b53a00; font-weight: bold; font-size: 18px; margin-top: 4px; }
+        .acao { display: flex; gap: 8px; align-items: center; }
+        .acao input { width: 60px; padding: 6px; font-size: 16px; }
+        .acao button { background: #b53a00; color: #fff; border: 0; padding: 8px 14px;
+                       border-radius: 6px; cursor: pointer; font-size: 16px; }
+        .carrinho { position: fixed; top: 16px; right: 16px; background: #b53a00; color: #fff;
+                    padding: 10px 16px; border-radius: 20px; text-decoration: none; font-weight: bold; }
+        .vazio { color: #999; font-style: italic; }
     </style>
 </head>
 <body>
+    <a class="carrinho" th:href="@{/carrinho}">🛒 Carrinho (<span th:text="${totalItens}">0</span>)</a>
+
     <h1>🍔 Nosso Cardápio</h1>
+
     <div class="lista">
-        <div class="item" th:each="produto : ${produtos}">
+
+        <h2>🍔 Comidas</h2>
+        <p class="vazio" th:if="${#lists.isEmpty(comidas)}">Nenhuma comida cadastrada.</p>
+        <div class="item" th:each="p : ${comidas}">
             <div>
-                <div class="cat" th:text="${produto.categoria}"></div>
-                <div class="nome" th:text="${produto.nome}"></div>
-                <div class="desc" th:text="${produto.descricao}"></div>
+                <div class="nome" th:text="${p.nome}"></div>
+                <div class="desc" th:text="${p.descricao}"></div>
+                <div class="preco"
+                     th:text="${p.preco != null} ? 'R$ ' + ${#numbers.formatDecimal(p.preco, 1, 'POINT', 2, 'COMMA')} : ''"></div>
             </div>
-            <div class="preco" th:text="'R$ ' + ${#numbers.formatDecimal(produto.preco, 1, 'POINT', 2, 'COMMA')}"></div>
+            <form class="acao" th:action="@{/carrinho/adicionar}" method="post">
+                <input type="hidden" name="id" th:value="${p.id}">
+                <input type="number" name="quantidade" value="1" min="1" max="20">
+                <button type="submit">Adicionar</button>
+            </form>
         </div>
+
+        <h2>🥤 Bebidas</h2>
+        <p class="vazio" th:if="${#lists.isEmpty(bebidas)}">Nenhuma bebida cadastrada.</p>
+        <div class="item" th:each="p : ${bebidas}">
+            <div>
+                <div class="nome" th:text="${p.nome}"></div>
+                <div class="desc" th:text="${p.descricao}"></div>
+                <div class="preco"
+                     th:text="${p.preco != null} ? 'R$ ' + ${#numbers.formatDecimal(p.preco, 1, 'POINT', 2, 'COMMA')} : ''"></div>
+            </div>
+            <form class="acao" th:action="@{/carrinho/adicionar}" method="post">
+                <input type="hidden" name="id" th:value="${p.id}">
+                <input type="number" name="quantidade" value="1" min="1" max="20">
+                <button type="submit">Adicionar</button>
+            </form>
+        </div>
+
     </div>
 </body>
 </html>

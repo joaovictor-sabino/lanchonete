@@ -32,7 +32,8 @@
     <a class="carrinho" th:href="@{/carrinho}">🛒 Carrinho (<span th:text="${totalItens}">0</span>)</a>
 
     <h1>🍔 Nosso Cardápio</h1>
-
+    <a th:if="${ultimoPedidoId != null}"
+   th:href="@{/pedido/{id}/confirmado(id=${ultimoPedidoId})}">📦 Acompanhar meu pedido</a>
     <form th:action="@{/carrinho/adicionar-varios}" method="post">
         <div class="lista">
 

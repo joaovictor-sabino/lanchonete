@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta http-equiv="refresh" content="15" th:unless="${pedido.encerrado}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Pedido confirmado</title>
@@ -16,11 +17,30 @@
         .total { text-align: right; font-size: 20px; font-weight: bold; color: #b53a00; margin-top: 10px; }
         a.voltar { display: inline-block; padding: 10px 16px; border-radius: 6px; background: #b53a00;
                    color: #fff; text-decoration: none; }
+        .status-box { border-radius: 10px; padding: 16px; margin-bottom: 16px; text-align: center; }
+        .status-box h3 { margin: 0 0 6px; }
+        .status-box p { margin: 0; }
+        .st-NOVO { background: #fff3cd; color: #8a6d00; }
+        .st-EM_PREPARO { background: #ffe0b2; color: #e65100; }
+        .st-PRONTO { background: #d1ecf1; color: #0c5460; }
+        .st-FINALIZADO { background: #d4edda; color: #1b5e20; }
+        .st-CANCELADO { background: #f8d7da; color: #b00020; }
     </style>
 </head>
 <body>
     <h1>✅ Pedido confirmado!</h1>
-
+    <div class="status-box" th:classappend="'st-' + ${pedido.status.name()}">
+    <h3 th:text="${pedido.status.descricao}"></h3>
+    <p th:switch="${pedido.status.name()}">
+        <span th:case="'NOVO'">Recebemos seu pedido e logo começaremos o preparo.</span>
+        <span th:case="'EM_PREPARO'">Seu pedido está sendo preparado.</span>
+        <span th:case="'PRONTO'"
+              th:text="${pedido.entrega} ? 'Seu pedido está pronto e vai sair para entrega.' : 'Seu pedido está pronto! Pode retirar no balcão.'"></span>
+        <span th:case="'FINALIZADO'"
+              th:text="${pedido.entrega} ? 'Pedido entregue. Bom apetite!' : 'Pedido retirado. Bom apetite!'"></span>
+        <span th:case="'CANCELADO'">Este pedido foi cancelado.</span>
+    </p>
+</div>
     <div class="conteudo">
         <div class="cartao">
             <h3 th:text="'Pedido nº ' + ${pedido.id}"></h3>

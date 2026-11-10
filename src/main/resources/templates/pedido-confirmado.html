@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pedido confirmado</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #fff8f0; margin: 0; padding: 20px; }
+        h1 { text-align: center; color: #2e7d32; }
+        .conteudo { max-width: 800px; margin: 0 auto; }
+        .cartao { background: #fff; border-radius: 10px; padding: 16px; margin-bottom: 16px;
+                  box-shadow: 0 2px 6px rgba(0,0,0,.1); }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 8px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #b53a00; color: #fff; }
+        .total { text-align: right; font-size: 20px; font-weight: bold; color: #b53a00; margin-top: 10px; }
+        a.voltar { display: inline-block; padding: 10px 16px; border-radius: 6px; background: #b53a00;
+                   color: #fff; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <h1>✅ Pedido confirmado!</h1>
+
+    <div class="conteudo">
+        <div class="cartao">
+            <h3 th:text="'Pedido nº ' + ${pedido.id}"></h3>
+            <p><strong>Cliente:</strong> <span th:text="${pedido.nomeCliente}"></span></p>
+            <p><strong>Telefone:</strong> <span th:text="${pedido.telefone}"></span></p>
+
+            <div th:if="${pedido.entrega}">
+                <p><strong>Entrega em:</strong>
+                    <span th:text="${pedido.rua} + ', ' + ${pedido.numero}"></span>
+                    <span th:if="${pedido.complemento != null}" th:text="' - ' + ${pedido.complemento}"></span>
+                    <span th:text="' - ' + ${pedido.bairro} + ', ' + ${pedido.cidade}"></span>
+                    <span th:if="${pedido.cep != null}" th:text="' (CEP ' + ${pedido.cep} + ')'"></span>
+                </p>
+            </div>
+            <p th:unless="${pedido.entrega}"><strong>Retirada no local.</strong> Avisaremos quando estiver pronto.</p>
+
+            <p th:if="${pedido.observacoes != null}">
+                <strong>Observações:</strong> <span th:text="${pedido.observacoes}"></span>
+            </p>
+        </div>
+
+        <div class="cartao">
+            <table>
+                <thead>
+                    <tr><th>Produto</th><th>Qtd</th><th>Subtotal</th></tr>
+                </thead>
+                <tbody>
+                    <tr th:each="item : ${pedido.itens}">
+                        <td>
+                            <span th:text="${item.nomeProduto}"></span>
+                            <strong th:if="${item.tamanho != 'U'}" th:text="'(' + ${item.tamanho} + ')'"></strong>
+                        </td>
+                        <td th:text="${item.quantidade}"></td>
+                        <td th:text="'R$ ' + ${#numbers.formatDecimal(item.subtotal, 1, 'POINT', 2, 'COMMA')}"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="total"
+                 th:text="'Total: R$ ' + ${#numbers.formatDecimal(pedido.total, 1, 'POINT', 2, 'COMMA')}"></div>
+        </div>
+
+        <a class="voltar" th:href="@{/cardapio}">Voltar ao cardápio</a>
+    </div>
+</body>
+</html>

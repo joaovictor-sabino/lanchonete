@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Finalizar pedido</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #fff8f0; margin: 0; padding: 20px; }
+        h1 { text-align: center; color: #b53a00; }
+        .conteudo { max-width: 800px; margin: 0 auto; }
+        .cartao { background: #fff; border-radius: 10px; padding: 16px; margin-bottom: 16px;
+                  box-shadow: 0 2px 6px rgba(0,0,0,.1); }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 8px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #b53a00; color: #fff; }
+        .total { text-align: right; font-size: 20px; font-weight: bold; color: #b53a00; margin-top: 10px; }
+        label { display: block; margin-top: 12px; font-weight: bold; }
+        input[type=text], input[type=tel], textarea { width: 100%; padding: 8px; box-sizing: border-box;
+                  border: 1px solid #ccc; border-radius: 6px; font-size: 16px; }
+        .opcao { display: flex; align-items: center; gap: 8px; font-weight: normal; padding: 10px;
+                 border: 1px solid #ddd; border-radius: 6px; margin-top: 8px; cursor: pointer; }
+        .linha { display: flex; gap: 10px; }
+        .linha > div { flex: 1; }
+        .erros { background: #fdecea; color: #b00020; border-radius: 8px; padding: 10px 16px; margin-bottom: 16px; }
+        .botoes { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+        a.voltar, button { padding: 10px 16px; border-radius: 6px; border: 0; cursor: pointer;
+                           font-size: 16px; text-decoration: none; }
+        a.voltar { background: #eee; color: #333; }
+        button.confirmar { background: #b53a00; color: #fff; }
+    </style>
+</head>
+<body>
+    <h1>Finalizar pedido</h1>
+
+    <div class="conteudo">
+        <div class="erros" th:if="${erros != null}">
+            <ul>
+                <li th:each="erro : ${erros}" th:text="${erro}"></li>
+            </ul>
+        </div>
+
+        <div class="cartao">
+            <h3>Resumo</h3>
+            <table>
+                <thead>
+                    <tr><th>Produto</th><th>Qtd</th><th>Subtotal</th></tr>
+                </thead>
+                <tbody>
+                    <tr th:each="item : ${itens}">
+                        <td>
+                            <span th:text="${item.produto.nome}"></span>
+                            <strong th:if="${item.tamanho != 'U'}" th:text="'(' + ${item.tamanho} + ')'"></strong>
+                        </td>
+                        <td th:text="${item.quantidade}"></td>
+                        <td th:text="'R$ ' + ${#numbers.formatDecimal(item.subtotal, 1, 'POINT', 2, 'COMMA')}"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="total"
+                 th:text="'Total: R$ ' + ${#numbers.formatDecimal(total, 1, 'POINT', 2, 'COMMA')}"></div>
+        </div>
+
+        <form th:action="@{/checkout/confirmar}" th:object="${form}" method="post">
+
+            <div class="cartao">
+                <h3>Seus dados</h3>
+                <label for="nomeCliente">Nome</label>
+                <input type="text" id="nomeCliente" th:field="*{nomeCliente}" maxlength="100" required>
+
+                <label for="telefone">Telefone (com DDD)</label>
+                <input type="tel" id="telefone" th:field="*{telefone}" maxlength="20" required>
+            </div>
+
+            <div class="cartao">
+                <h3>Como você quer receber?</h3>
+
+                <label class="opcao">
+                    <input type="radio" th:field="*{tipoEntrega}" value="RETIRADA">
+                    Retirar no local
+                </label>
+                <label class="opcao">
+                    <input type="radio" th:field="*{tipoEntrega}" value="ENTREGA">
+                    Entrega no meu endereço
+                </label>
+
+                <div id="endereco" style="display:none">
+                    <label for="cep">CEP (opcional)</label>
+                    <input type="text" id="cep" th:field="*{cep}" maxlength="9">
+
+                    <div class="linha">
+                        <div style="flex:3">
+                            <label for="rua">Rua</label>
+                            <input type="text" id="rua" th:field="*{rua}" maxlength="150">
+                        </div>
+                        <div>
+                            <label for="numero">Número</label>
+                            <input type="text" id="numero" th:field="*{numero}" maxlength="10">
+                        </div>
+                    </div>
+
+                    <label for="complemento">Complemento (opcional)</label>
+                    <input type="text" id="complemento" th:field="*{complemento}" maxlength="100">
+
+                    <div class="linha">
+                        <div>
+                            <label for="bairro">Bairro</label>
+                            <input type="text" id="bairro" th:field="*{bairro}" maxlength="100">
+                        </div>
+                        <div>
+                            <label for="cidade">Cidade</label>
+                            <input type="text" id="cidade" th:field="*{cidade}" maxlength="100">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cartao">
+                <label for="observacoes">Observações (opcional)</label>
+                <textarea id="observacoes" th:field="*{observacoes}" rows="3" maxlength="300"></textarea>
+            </div>
+
+            <div class="botoes">
+                <a class="voltar" th:href="@{/carrinho}">← Voltar ao carrinho</a>
+                <button class="confirmar" type="submit">Confirmar pedido</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const radios = document.querySelectorAll('input[name="tipoEntrega"]');
+        const endereco = document.getElementById('endereco');
+
+        function atualizar() {
+            const marcado = document.querySelector('input[name="tipoEntrega"]:checked');
+            endereco.style.display = (marcado && marcado.value === 'ENTREGA') ? 'block' : 'none';
+        }
+
+        radios.forEach(r => r.addEventListener('change', atualizar));
+        atualizar(); // roda ao abrir (e ao voltar com erro de validação)
+    </script>
+</body>
+</html>

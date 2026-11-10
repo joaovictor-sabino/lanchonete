@@ -19,6 +19,8 @@
         a.voltar { background: #eee; color: #333; }
         button.remover { background: #d33; color: #fff; padding: 6px 10px; }
         button.limpar { background: #666; color: #fff; }
+        a.finalizar { background: #b53a00; color: #fff; padding: 10px 16px; border-radius: 6px;
+              text-decoration: none; font-size: 16px; }
     </style>
 </head>
 <body>
@@ -56,6 +58,9 @@
 
         <div class="total" th:unless="${#lists.isEmpty(itens)}"
              th:text="'Total: R$ ' + ${#numbers.formatDecimal(total, 1, 'POINT', 2, 'COMMA')}"></div>
+             <div style="text-align:right; margin-bottom:16px" th:unless="${#lists.isEmpty(itens)}">
+    <a class="finalizar" th:href="@{/checkout}">Finalizar pedido →</a>
+</div>
 
         <div class="botoes">
             <a class="voltar" th:href="@{/cardapio}">← Continuar escolhendo</a>

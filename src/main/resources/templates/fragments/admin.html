@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="estilo">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f1ee; margin: 0; color: #333; }
+        .topo { background: #b53a00; color: #fff; padding: 14px 24px; display: flex;
+                align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+        .topo h1 { margin: 0; font-size: 22px; }
+        .abas { display: flex; gap: 6px; }
+        .abas a { color: #fff; text-decoration: none; padding: 8px 16px; border-radius: 20px;
+                  font-weight: 600; opacity: .8; }
+        .abas a:hover { opacity: 1; background: rgba(255,255,255,.15); }
+        .abas a.ativa { background: #fff; color: #b53a00; opacity: 1; }
+        .pagina { max-width: 1100px; margin: 24px auto; padding: 0 16px; }
+        .barra { display: flex; justify-content: space-between; align-items: center;
+                 gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+        .barra form { display: flex; gap: 8px; }
+        input[type=text], select { padding: 9px 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; }
+        .btn { display: inline-block; padding: 9px 16px; border-radius: 8px; border: 0; cursor: pointer;
+               font-size: 15px; text-decoration: none; font-weight: 600; }
+        .btn-primario { background: #b53a00; color: #fff; }
+        .btn-primario:hover { background: #962f00; }
+        .btn-sec { background: #e9e4df; color: #333; }
+        .btn-perigo { background: #fdecea; color: #b00020; }
+        .btn-perigo:hover { background: #f8d0cc; }
+        .btn-pequeno { padding: 6px 12px; font-size: 14px; }
+        .cartao { background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.08); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #faf6f2; text-align: left; padding: 12px 14px; font-size: 13px;
+             text-transform: uppercase; letter-spacing: .5px; color: #777; }
+        td { padding: 12px 14px; border-top: 1px solid #eee; vertical-align: middle; }
+        tr:hover td { background: #fffaf5; }
+        .etiqueta { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px;
+                    font-weight: 700; background: #eee; }
+        .vazio { text-align: center; padding: 40px; color: #888; }
+        .acoes { display: flex; gap: 6px; align-items: center; }
+        .acoes form { margin: 0; }
+    </style>
+</head>
+<body>
+    <header th:fragment="menu(ativa)" class="topo">
+        <h1>🍔 Painel da Lanchonete</h1>
+        <nav class="abas">
+            <a th:href="@{/admin/produtos}" th:classappend="${ativa == 'produtos'} ? 'ativa'">Produtos</a>
+            <a th:href="@{/admin/pedidos}" th:classappend="${ativa == 'pedidos'} ? 'ativa'">Pedidos</a>
+            <a th:href="@{/cardapio}" target="_blank">Ver cardápio ↗</a>
+        </nav>
+    </header>
+</body>
+</html>

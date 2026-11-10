@@ -1,45 +1,57 @@
 <!DOCTYPE html>
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Cardápio - Administração</title>
+    <title>Produtos - Administração</title>
+    <th:block th:replace="~{fragments/admin :: estilo}"></th:block>
 </head>
 <body>
-    <h1>Cardápio</h1>
+    <header th:replace="~{fragments/admin :: menu('produtos')}"></header>
 
-    <form th:action="@{/admin/produtos}" method="get">
-        <input type="text" name="busca" placeholder="Buscar por nome">
-        <button type="submit">Buscar</button>
-    </form>
-    <a th:href="@{/admin/produtos/novo}">Novo produto</a>
-    <br><br>
+    <main class="pagina">
+        <div class="barra">
+            <form th:action="@{/admin/produtos}" method="get">
+                <input type="text" name="busca" placeholder="Buscar por nome">
+                <button class="btn btn-sec" type="submit">Buscar</button>
+            </form>
+            <a class="btn btn-primario" th:href="@{/admin/produtos/novo}">+ Novo produto</a>
+        </div>
 
-    <table border="1">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nome</th>
-                <th>Descrição</th>
-                <th>Preço</th>
-                <th>Categoria</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="produto : ${produtos}">
-                <td th:text="${produto.id}"></td>
-                <td th:text="${produto.nome}"></td>
-                <td th:text="${produto.descricao}"></td>
-                <td th:text="${#numbers.formatDecimal(produto.preco, 1, 'POINT', 2, 'COMMA')}"></td>
-                <td th:text="${produto.categoria}"></td>
-                <td>
-                    <a th:href="@{/admin/produtos/editar/{id}(id=${produto.id})}">Editar</a>
-                    <form th:action="@{/admin/produtos/excluir/{id}(id=${produto.id})}" method="post" style="display:inline">
-                        <button type="submit">Excluir</button>
-                    </form>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+        <div class="cartao">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Descrição</th>
+                        <th>Preço</th>
+                        <th>Categoria</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="produto : ${produtos}">
+                        <td th:text="${produto.id}"></td>
+                        <td><strong th:text="${produto.nome}"></strong></td>
+                        <td th:text="${produto.descricao}"></td>
+                        <td th:text="'R$ ' + ${#numbers.formatDecimal(produto.preco, 1, 'POINT', 2, 'COMMA')}"></td>
+                        <td><span class="etiqueta" th:text="${produto.categoria}"></span></td>
+                        <td>
+                            <div class="acoes">
+                                <a class="btn btn-sec btn-pequeno"
+                                   th:href="@{/admin/produtos/editar/{id}(id=${produto.id})}">Editar</a>
+                                <form th:action="@{/admin/produtos/excluir/{id}(id=${produto.id})}" method="post"
+                                      onsubmit="return confirm('Excluir este produto?');">
+                                    <button class="btn btn-perigo btn-pequeno" type="submit">Excluir</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(produtos)}">
+                        <td colspan="6" class="vazio">Nenhum produto encontrado.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
 </body>
 </html>

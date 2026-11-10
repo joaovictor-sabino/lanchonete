@@ -93,4 +93,14 @@ public class Pedido {
 
     public List<ItemPedido> getItens() { return itens; }
     public void setItens(List<ItemPedido> itens) { this.itens = itens; }
+
+    @Enumerated(EnumType.STRING)
+private StatusPedido status = StatusPedido.NOVO;
+
+public StatusPedido getStatus() {
+    // pedidos antigos, criados antes desta coluna existir, vêm com null
+    return status == null ? StatusPedido.NOVO : status;
 }
+public void setStatus(StatusPedido status) { this.status = status; }
+}
+

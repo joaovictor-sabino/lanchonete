@@ -118,4 +118,18 @@ public class PedidoService {
     private static String somenteDigitos(String s) {
         return s == null ? "" : s.replaceAll("\\D", "");
     }
+
+    public List<Pedido> listar(StatusPedido filtro) {
+    if (filtro == null) {
+        return pedidoRepository.findAllByOrderByCriadoEmDesc();
+    }
+    return pedidoRepository.findByStatusOrderByCriadoEmDesc(filtro);
+}
+
+@Transactional
+public void atualizarStatus(Long id, StatusPedido novoStatus) {
+    Pedido pedido = buscarPorId(id);
+    pedido.setStatus(novoStatus);
+    pedidoRepository.save(pedido);
+}
 }

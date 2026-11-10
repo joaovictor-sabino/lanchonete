@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Pedidos - Administração</title>
+    <th:block th:replace="~{fragments/admin :: estilo}"></th:block>
+    <style>
+        .pedido { background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.08);
+                  margin-bottom: 16px; overflow: hidden; }
+        .pedido-topo { display: flex; justify-content: space-between; align-items: center; gap: 10px;
+                       flex-wrap: wrap; padding: 12px 16px; background: #faf6f2; border-bottom: 1px solid #eee; }
+        .pedido-corpo { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 16px; }
+        @media (max-width: 700px) { .pedido-corpo { grid-template-columns: 1fr; } }
+        .pedido h4 { margin: 0 0 6px; color: #b53a00; font-size: 14px; text-transform: uppercase; }
+        .pedido p { margin: 3px 0; }
+        .tipo-retirada { background: #e3f2fd; color: #1565c0; }
+        .tipo-entrega  { background: #fff3e0; color: #e65100; }
+        .st-NOVO { background: #fff3cd; color: #8a6d00; }
+        .st-EM_PREPARO { background: #ffe0b2; color: #e65100; }
+        .st-PRONTO { background: #d1ecf1; color: #0c5460; }
+        .st-FINALIZADO { background: #d4edda; color: #1b5e20; }
+        .st-CANCELADO { background: #f8d7da; color: #b00020; }
+        .itens td, .itens th { padding: 6px 8px; font-size: 14px; }
+        .total { text-align: right; font-weight: bold; color: #b53a00; padding: 8px 16px 14px; font-size: 18px; }
+        .muda-status { display: flex; gap: 6px; padding: 0 16px 16px; align-items: center; }
+        .filtros { display: flex; gap: 6px; flex-wrap: wrap; }
+    </style>
+</head>
+<body>
+    <header th:replace="~{fragments/admin :: menu('pedidos')}"></header>
+
+    <main class="pagina">
+        <div class="barra">
+            <div class="filtros">
+                <a class="btn btn-sm" th:classappend="${statusAtual == null} ? 'btn-primario' : 'btn-sec'"
+                   th:href="@{/admin/pedidos}">Todos</a>
+                <a th:each="s : ${todosStatus}" class="btn"
+                   th:classappend="${statusAtual == s} ? 'btn-primario' : 'btn-sec'"
+                   th:href="@{/admin/pedidos(status=${s.name()})}" th:text="${s.descricao}"></a>
+            </div>
+        </div>
+
+        <p class="vazio" th:if="${#lists.isEmpty(pedidos)}">Nenhum pedido encontrado.</p>
+
+        <div class="pedido" th:each="p : ${pedidos}">
+            <div class="pedido-topo">
+                <div>
+                    <strong th:text="'Pedido nº ' + ${p.id}"></strong>
+                    <span th:text="${#temporals.format(p.criadoEm, 'dd/MM/yyyy HH:mm')}"></span>
+                </div>
+                <div>
+                    <span class="etiqueta" th:classappend="${p.entrega} ? 'tipo-entrega' : 'tipo-retirada'"
+                          th:text="${p.entrega} ? '🛵 Entrega' : '🏪 Retirar no local'"></span>
+                    <span class="etiqueta" th:classappend="'st-' + ${p.status.name()}"
+                          th:text="${p.status.descricao}"></span>
+                </div>
+            </div>
+
+            <div class="pedido-corpo">
+                <div>
+                    <h4>Cliente</h4>
+                    <p><strong th:text="${p.nomeCliente}"></strong></p>
+                    <p th:text="'Tel: ' + ${p.telefone}"></p>
+
+                    <h4 style="margin-top:14px">Recebimento</h4>
+                    <div th:if="${p.entrega}">
+                        <p th:text="${p.rua} + ', ' + ${p.numero}"></p>
+                        <p th:if="${p.complemento != null}" th:text="${p.complemento}"></p>
+                        <p th:text="${p.bairro} + ' - ' + ${p.cidade}"></p>
+                        <p th:if="${p.cep != null}" th:text="'CEP: ' + ${p.cep}"></p>
+                    </div>
+                    <p th:unless="${p.entrega}">Cliente vai retirar no local.</p>
+
+                    <div th:if="${p.observacoes != null}">
+                        <h4 style="margin-top:14px">Observações</h4>
+                        <p th:text="${p.observacoes}"></p>
+                    </div>
+                </div>
+
+                <div>
+                    <h4>Itens</h4>
+                    <table class="itens">
+                        <thead><tr><th>Item</th><th>Qtd</th><th>Subtotal</th></tr></thead>
+                        <tbody>
+                            <tr th:each="i : ${p.itens}">
+                                <td>
+                                    <span th:text="${i.nomeProduto}"></span>
+                                    <strong th:if="${i.tamanho != 'U'}" th:text="'(' + ${i.tamanho} + ')'"></strong>
+                                </td>
+                                <td th:text="${i.quantidade}"></td>
+                                <td th:text="'R$ ' + ${#numbers.formatDecimal(i.subtotal, 1, 'POINT', 2, 'COMMA')}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="total"
+                 th:text="'Total: R$ ' + ${#numbers.formatDecimal(p.total, 1, 'POINT', 2, 'COMMA')}"></div>
+
+            <form class="muda-status" th:action="@{/admin/pedidos/{id}/status(id=${p.id})}" method="post">
+                <label>Alterar status:</label>
+                <select name="status">
+                    <option th:each="s : ${todosStatus}" th:value="${s.name()}"
+                            th:text="${s.descricao}" th:selected="${s == p.status}"></option>
+                </select>
+                <button class="btn btn-primario btn-pequeno" type="submit">Atualizar</button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

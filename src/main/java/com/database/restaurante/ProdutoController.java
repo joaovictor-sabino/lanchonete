@@ -32,6 +32,7 @@ public class ProdutoController {
         } else {
             model.addAttribute("produtos", service.listar());
         }
+        model.addAttribute("abaAtiva", "produtos");
         return "cardapio";
     }
 

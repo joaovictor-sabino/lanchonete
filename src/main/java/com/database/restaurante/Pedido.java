@@ -52,6 +52,11 @@ public class Pedido {
 
     public boolean isEntrega() { return tipoEntrega == TipoEntrega.ENTREGA; }
 
+    public boolean isEncerrado() {
+    StatusPedido s = getStatus();
+    return s == StatusPedido.FINALIZADO || s == StatusPedido.CANCELADO;
+    }
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

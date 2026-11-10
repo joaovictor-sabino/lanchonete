@@ -76,6 +76,7 @@ public class ProdutoController {
             : carrinho.values().stream().mapToInt(Integer::intValue).sum();
         model.addAttribute("totalItens", totalItens);
 
+        model.addAttribute("ultimoPedidoId", session.getAttribute("ultimoPedidoId"));
         return "CardapioPublico";
     }
 }

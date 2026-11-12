@@ -52,11 +52,52 @@
             .item { flex-wrap: wrap; }
             .item > div:first-child { flex-basis: 100%; }
             .item .qtd { width: 100%; justify-content: flex-end; }
+
+            .carrinho { z-index: 30; }
+            .carrinho.bump { animation: bump .5s ease; }
+            @keyframes bump {
+                0%   { transform: scale(1); }
+                30%  { transform: scale(1.25); }
+                60%  { transform: scale(.95); }
+                100% { transform: scale(1); }
+            }
+
+            #contador { display: inline-block; min-width: 1ch; text-align: center; }
+            #contador.pulo { animation: pulo .4s ease; }
+            @keyframes pulo {
+                0%   { transform: translateY(0); }
+                40%  { transform: translateY(-6px); }
+                100% { transform: translateY(0); }
+            }
+
+            /* "+N" que sobe a partir do carrinho */
+            .mais-n { position: fixed; top: 62px; right: 28px; z-index: 31; pointer-events: none;
+                    background: #2e7d32; color: #fff; font-weight: bold; padding: 3px 10px; border-radius: 12px;
+                    animation: subir 1s ease forwards; }
+            @keyframes subir {
+                0%   { opacity: 0; transform: translateY(10px); }
+                20%  { opacity: 1; }
+                100% { opacity: 0; transform: translateY(-26px); }
+            }
+
+            /* aviso inferior */
+            .toast { position: fixed; left: 50%; bottom: 84px; transform: translate(-50%, 20px); opacity: 0;
+                    background: #2e7d32; color: #fff; padding: 10px 20px; border-radius: 24px; font-weight: bold;
+                    box-shadow: 0 4px 12px rgba(0,0,0,.25); transition: opacity .25s, transform .25s;
+                    pointer-events: none; z-index: 40; max-width: 90%; text-align: center; }
+            .toast.mostrar { opacity: 1; transform: translate(-50%, 0); }
+            .toast.erro { background: #b00020; }
+
+            .barra button:disabled { opacity: .6; cursor: wait; }
+
+            @media (prefers-reduced-motion: reduce) {
+                .carrinho.bump, #contador.pulo, .mais-n { animation: none; }
+            }
 }
     </style>
 </head>
 <body>
-    <a class="carrinho" th:href="@{/carrinho}">🛒 Carrinho (<span th:text="${totalItens}">0</span>)</a>
+    <a class="carrinho" id="pillCarrinho" th:href="@{/carrinho}">🛒 Carrinho (<span id="contador" th:text="${totalItens}">0</span>)</a>
 
     <h1>🍔 Nosso Cardápio</h1>
     <nav class="categorias" th:unless="${#maps.isEmpty(categorias)}">
@@ -64,7 +105,11 @@
     </nav>
     <a th:if="${ultimoPedidoId != null}"
    th:href="@{/pedido/{id}/confirmado(id=${ultimoPedidoId})}">📦 Acompanhar meu pedido</a>
-    <form th:action="@{/carrinho/adicionar-varios}" method="post">
+    <form id="formCardapio"
+            th:action="@{/carrinho/adicionar-varios}"
+            th:data-ajax="@{/carrinho/adicionar-ajax}"
+            method="post">
+   
         <div class="lista">
 
             <h2 th:unless="${#lists.isEmpty(comidas)}">🍔 Comidas</h2>
@@ -116,9 +161,13 @@
         </div>
 
         <div class="barra">
-            <button type="submit">Adicionar selecionados ao carrinho</button>
+            <button type="submit" id="btnAdicionar">Adicionar selecionados ao carrinho</button>
         </div>
+
+        
     </form>
+
+    <div id="toast" class="toast"></div>
 
     <script>
         function mudar(botao, delta) {
@@ -128,6 +177,97 @@
         if (novo > 20) novo = 20;
         campo.value = novo;
     }
+
+    //ANIMAÇÃO CARRINHO
+    var form = document.getElementById('formCardapio');
+var contadorEl = document.getElementById('contador');
+var pill = document.getElementById('pillCarrinho');
+var botaoAdd = document.getElementById('btnAdicionar');
+var toastEl = document.getElementById('toast');
+var toastTimer;
+
+function toast(msg, erro) {
+    toastEl.textContent = msg;
+    toastEl.classList.toggle('erro', !!erro);
+    toastEl.classList.add('mostrar');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.classList.remove('mostrar'); }, 2200);
+}
+
+// reinicia uma animação CSS mesmo que ela já tenha rodado antes
+function reiniciar(el, classe) {
+    el.classList.remove(classe);
+    void el.offsetWidth;
+    el.classList.add(classe);
+}
+
+// o número "rola" do valor antigo até o novo
+function animarContador(de, para) {
+    var reduzir = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduzir || de === para) { contadorEl.textContent = para; return; }
+    var inicio = null, duracao = 500;
+    function passo(t) {
+        if (inicio === null) inicio = t;
+        var p = Math.min((t - inicio) / duracao, 1);
+        contadorEl.textContent = Math.round(de + (para - de) * p);
+        if (p < 1) requestAnimationFrame(passo);
+    }
+    requestAnimationFrame(passo);
+}
+
+function mostrarMais(n) {
+    var el = document.createElement('div');
+    el.className = 'mais-n';
+    el.textContent = '+' + n;
+    document.body.appendChild(el);
+    setTimeout(function () { el.remove(); }, 1000);
+}
+
+form.addEventListener('submit', function (e) {
+    e.preventDefault(); // não sai da página
+
+    var soma = 0;
+    form.querySelectorAll('input[type="number"]').forEach(function (i) {
+        soma += parseInt(i.value) || 0;
+    });
+    if (soma < 1) {
+        toast('Escolha a quantidade de pelo menos um item.', true);
+        return;
+    }
+
+    var textoOriginal = botaoAdd.textContent;
+    botaoAdd.disabled = true;
+    botaoAdd.textContent = 'Adicionando...';
+
+    fetch(form.dataset.ajax, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(new FormData(form))
+    })
+    .then(function (r) {
+        if (!r.ok) throw new Error('falha');
+        return r.json();
+    })
+    .then(function (d) {
+        var antes = parseInt(contadorEl.textContent) || 0;
+        animarContador(antes, d.totalItens);
+        reiniciar(pill, 'bump');
+        reiniciar(contadorEl, 'pulo');
+        mostrarMais(d.adicionados);
+
+        // zera as quantidades para não adicionar de novo ao clicar outra vez
+        form.querySelectorAll('input[type="number"]').forEach(function (i) { i.value = 0; });
+
+        toast(d.adicionados + (d.adicionados === 1 ? ' item adicionado' : ' itens adicionados') + ' ao carrinho ✓');
+    })
+    .catch(function () {
+        toast('Não foi possível adicionar. Tente novamente.', true);
+    })
+    .finally(function () {
+        botaoAdd.disabled = false;
+        botaoAdd.textContent = textoOriginal;
+    });
+});
     </script>
 </body>
 </html>

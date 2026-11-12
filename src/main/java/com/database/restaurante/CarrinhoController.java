@@ -43,7 +43,7 @@ public class CarrinhoController {
         return "P";
     }
 
-    @PostMapping("/carrinho/adicionar-varios")
+    
     private int adicionarItens(Map<String, String> params, HttpSession session) {
     int adicionados = 0;
     for (Map.Entry<String, String> e : params.entrySet()) {

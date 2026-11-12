@@ -1,5 +1,6 @@
 package com.database.restaurante;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import jakarta.servlet.http.HttpSession;
@@ -60,23 +61,38 @@ public class ProdutoController {
         return "redirect:/admin/produtos";
     }
     @SuppressWarnings("unchecked")
-    @GetMapping("/cardapio")
-    public String CardapioPublico(Model model, HttpSession session) {
-        List<Produto> todos = service.listar();
+    private static final List<String> ORDEM_CATEGORIAS =
+    List.of("Hambúrguer", "Acompanhamento", "Bebida", "Sobremesa");
 
-        model.addAttribute("comidas", todos.stream()
-            .filter(p -> !"Bebida".equalsIgnoreCase(p.getCategoria()))
-            .toList());
-        model.addAttribute("bebidas", todos.stream()
-            .filter(p -> "Bebida".equalsIgnoreCase(p.getCategoria()))
-            .toList());
+@GetMapping("/cardapio")
+public String CardapioPublico(Model model, HttpSession session) {
+    List<Produto> todos = service.listar();
 
-        Map<String, Integer> carrinho = (Map<String, Integer>) session.getAttribute("carrinho");
-        int totalItens = carrinho == null ? 0
-            : carrinho.values().stream().mapToInt(Integer::intValue).sum();
-        model.addAttribute("totalItens", totalItens);
-
-        model.addAttribute("ultimoPedidoId", session.getAttribute("ultimoPedidoId"));
-        return "CardapioPublico";
+    // Mantém a ordem definida acima; categorias sem produto não aparecem
+    Map<String, List<Produto>> categorias = new LinkedHashMap<>();
+    for (String cat : ORDEM_CATEGORIAS) {
+        List<Produto> lista = todos.stream()
+            .filter(p -> cat.equalsIgnoreCase(p.getCategoria()))
+            .toList();
+        if (!lista.isEmpty()) {
+            categorias.put(cat, lista);
+        }
     }
+
+    // Produtos com categoria fora da lista (ex.: cadastros antigos) não somem
+    List<Produto> outros = todos.stream()
+        .filter(p -> ORDEM_CATEGORIAS.stream().noneMatch(c -> c.equalsIgnoreCase(p.getCategoria())))
+        .toList();
+    if (!outros.isEmpty()) {
+        categorias.put("Outros", outros);
+    }
+    model.addAttribute("categorias", categorias);
+
+    Map<String, Integer> carrinho = (Map<String, Integer>) session.getAttribute("carrinho");
+    int totalItens = carrinho == null ? 0
+        : carrinho.values().stream().mapToInt(Integer::intValue).sum();
+    model.addAttribute("totalItens", totalItens);
+
+    return "CardapioPublico";
+}
 }

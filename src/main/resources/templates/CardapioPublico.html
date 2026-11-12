@@ -26,63 +26,65 @@
         .carrinho { position: fixed; top: 16px; right: 16px; background: #b53a00; color: #fff;
                     padding: 10px 16px; border-radius: 20px; text-decoration: none; font-weight: bold; }
         .vazio { color: #999; font-style: italic; }
+        html { scroll-behavior: smooth; }
+        .categorias { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin: 0 auto 24px; max-width: 800px; }
+        .categorias a { background: #fff; color: #b53a00; border: 2px solid #b53a00; padding: 8px 16px;
+                        border-radius: 20px; text-decoration: none; font-weight: bold; }
+        .categorias a:hover { background: #b53a00; color: #fff; }
+        h2 { margin-top: 32px; }
     </style>
 </head>
 <body>
     <a class="carrinho" th:href="@{/carrinho}">🛒 Carrinho (<span th:text="${totalItens}">0</span>)</a>
 
     <h1>🍔 Nosso Cardápio</h1>
+    <nav class="categorias" th:unless="${#maps.isEmpty(categorias)}">
+    <a th:each="e, st : ${categorias}" th:href="'#cat-' + ${st.index}" th:text="${e.key}"></a>
+    </nav>
     <a th:if="${ultimoPedidoId != null}"
    th:href="@{/pedido/{id}/confirmado(id=${ultimoPedidoId})}">📦 Acompanhar meu pedido</a>
     <form th:action="@{/carrinho/adicionar-varios}" method="post">
         <div class="lista">
 
             <h2>🍔 Comidas</h2>
-            <p class="vazio" th:if="${#lists.isEmpty(comidas)}">Nenhuma comida cadastrada.</p>
-            <div class="item" th:each="p : ${comidas}">
-                <div>
-                    <div class="nome" th:text="${p.nome}"></div>
-                    <div class="desc" th:text="${p.descricao}"></div>
-                        <div class="preco"
-                            th:if="${p.precoM == null and p.precoG == null}"
-                            th:text="${p.preco != null} ? 'R$ ' + ${#numbers.formatDecimal(p.preco, 1, 'POINT', 2, 'COMMA')} : ''"></div>
-                </div>
-                <div class="qtd">
-                    <select th:name="'tam_' + ${p.id}" th:if="${p.precoM != null or p.precoG != null}">
-                        <option value="P" th:text="'P - R$ ' + ${#numbers.formatDecimal(p.preco, 1, 'POINT', 2, 'COMMA')}"></option>
-                        <option value="M" th:if="${p.precoM != null}"
-                                th:text="'M - R$ ' + ${#numbers.formatDecimal(p.precoM, 1, 'POINT', 2, 'COMMA')}"></option>
-                        <option value="G" th:if="${p.precoG != null}"
-                                th:text="'G - R$ ' + ${#numbers.formatDecimal(p.precoG, 1, 'POINT', 2, 'COMMA')}"></option>
-                    </select>
-                    <button type="button" onclick="mudar(this, -1)">-</button>
-                    <input type="number" th:name="'qtd_' + ${p.id}" value="0" min="0" max="20">
-                    <button type="button" onclick="mudar(this, 1)">+</button>
-                </div>
-            </div>
+            <p class="vazio" th:if="${#maps.isEmpty(categorias)}">Nenhum produto cadastrado.</p>
 
-            <h2>🥤 Bebidas</h2>
-            <p class="vazio" th:if="${#lists.isEmpty(bebidas)}">Nenhuma bebida cadastrada.</p>
-            <div class="item" th:each="p : ${bebidas}">
-                <div>
-                    <div class="nome" th:text="${p.nome}"></div>
-                    <div class="desc" th:text="${p.descricao}"></div>
-                    <div class="preco"th:if="${p.precoM == null and p.precoG == null}"
-                    th:text="${p.preco != null} ? 'R$ ' + ${#numbers.formatDecimal(p.preco, 1, 'POINT', 2, 'COMMA')} : ''"></div>
-                </div>
-                <div class="qtd">
-                    <select th:name="'tam_' + ${p.id}" th:if="${p.precoM != null or p.precoG != null}">
-                        <option value="P" th:text="'P - R$ ' + ${#numbers.formatDecimal(p.preco, 1, 'POINT', 2, 'COMMA')}"></option>
-                        <option value="M" th:if="${p.precoM != null}"
-                                th:text="'M - R$ ' + ${#numbers.formatDecimal(p.precoM, 1, 'POINT', 2, 'COMMA')}"></option>
-                        <option value="G" th:if="${p.precoG != null}"
-                                th:text="'G - R$ ' + ${#numbers.formatDecimal(p.precoG, 1, 'POINT', 2, 'COMMA')}"></option>
-                    </select>
-                    <button type="button" onclick="mudar(this, -1)">-</button>
-                    <input type="number" th:name="'qtd_' + ${p.id}" value="0" min="0" max="20">
-                    <button type="button" onclick="mudar(this, 1)">+</button>
-                </div>
-            </div>
+        <th:block th:each="e, st : ${categorias}">
+
+            <h2 th:id="'cat-' + ${st.index}">
+        <span th:switch="${e.key}">
+            <span th:case="'Hambúrguer'">🍔</span>
+            <span th:case="'Acompanhamento'">🍟</span>
+            <span th:case="'Bebida'">🥤</span>
+            <span th:case="'Sobremesa'">🍰</span>
+            <span th:case="*">🍽️</span>
+        </span>
+        <span th:text="${e.key}"></span>
+        </h2>
+
+        <div class="item" th:each="p : ${e.value}">
+        <div>
+            <div class="nome" th:text="${p.nome}"></div>
+            <div class="desc" th:text="${p.descricao}"></div>
+            <div class="preco"
+                 th:if="${p.precoM == null and p.precoG == null}"
+                 th:text="${p.preco != null} ? 'R$ ' + ${#numbers.formatDecimal(p.preco, 1, 'POINT', 2, 'COMMA')} : ''"></div>
+        </div>
+        <div class="qtd">
+            <select th:name="'tam_' + ${p.id}" th:if="${p.precoM != null or p.precoG != null}">
+                <option value="P" th:text="'P - R$ ' + ${#numbers.formatDecimal(p.preco, 1, 'POINT', 2, 'COMMA')}"></option>
+                <option value="M" th:if="${p.precoM != null}"
+                        th:text="'M - R$ ' + ${#numbers.formatDecimal(p.precoM, 1, 'POINT', 2, 'COMMA')}"></option>
+                <option value="G" th:if="${p.precoG != null}"
+                        th:text="'G - R$ ' + ${#numbers.formatDecimal(p.precoG, 1, 'POINT', 2, 'COMMA')}"></option>
+            </select>
+            <button type="button" onclick="mudar(this, -1)">-</button>
+            <input type="number" th:name="'qtd_' + ${p.id}" value="0" min="0" max="20">
+            <button type="button" onclick="mudar(this, 1)">+</button>
+        </div>
+    </div>
+
+</th:block>
 
         </div>
 

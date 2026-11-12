@@ -1,40 +1,110 @@
 <!DOCTYPE html>
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Produto</title>
+    <title th:text="${produto.id == null} ? 'Novo produto' : 'Editar produto'">Produto</title>
+    <th:block th:replace="~{fragments/admin :: estilo}"></th:block>
+    <style>
+        .form-wrap { max-width: 640px; margin: 0 auto; }
+        .form-wrap h2 { margin: 0 0 4px; color: #b53a00; }
+        .subtitulo { margin: 0 0 20px; color: #888; font-size: 14px; }
+        .form-corpo { padding: 24px; }
+        .campo { margin-bottom: 18px; }
+        .campo label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 14px; }
+        .campo input, .campo select { width: 100%; padding: 11px 12px; border: 1px solid #d5cfc9;
+                border-radius: 8px; font-size: 16px; background: #fff; font-family: inherit; }
+        .campo input:focus, .campo select:focus { outline: none; border-color: #b53a00;
+                box-shadow: 0 0 0 3px rgba(181, 58, 0, .15); }
+        .dica { display: block; margin-top: 5px; font-size: 12px; color: #999; }
+        .secao { margin: 26px 0 14px; padding-bottom: 6px; border-bottom: 2px solid #f1ebe5;
+                 font-size: 13px; font-weight: 700; text-transform: uppercase;
+                 letter-spacing: .5px; color: #b53a00; }
+        .grade { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+        @media (max-width: 600px) { .grade { grid-template-columns: 1fr; } }
+        .prefixo { position: relative; }
+        .prefixo span { position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+                        color: #888; pointer-events: none; }
+        .prefixo input { padding-left: 38px; }
+        .rodape { display: flex; justify-content: flex-end; gap: 10px; padding: 16px 24px;
+                  background: #faf6f2; border-top: 1px solid #eee; }
+    </style>
 </head>
 <body>
-    <h1>Produto</h1>
+    <header th:replace="~{fragments/admin :: menu('produtos')}"></header>
 
-    <form th:action="@{/admin/produtos/salvar}" th:object="${produto}" method="post">
-        <input type="hidden" th:field="*{id}">
+    <main class="pagina">
+        <div class="form-wrap">
+            <h2 th:text="${produto.id == null} ? '🍔 Novo produto' : '✏️ Editar produto'">Produto</h2>
+            <p class="subtitulo">Preencha os dados que aparecerão no cardápio.</p>
 
-        <label>Nome:</label>
-        <input type="text" th:field="*{nome}"><br><br>
+            <form class="cartao" th:action="@{/admin/produtos/salvar}" th:object="${produto}" method="post">
+                <div class="form-corpo">
+                    <input type="hidden" th:field="*{id}">
 
-        <label>Descrição:</label>
-        <input type="text" th:field="*{descricao}"><br><br>
+                    <div class="secao" style="margin-top:0">Informações</div>
 
-        <label>Preço:</label>
-        <input type="number" step="0.01" th:field="*{preco}"><br><br>
+                    <div class="campo">
+                        <label for="nome">Nome</label>
+                        <input type="text" id="nome" th:field="*{nome}" maxlength="100"
+                               placeholder="Ex.: X-Burger" required>
+                    </div>
 
-        <label>Preço M (opcional):</label>
-        <input type="number" step="0.01" th:field="*{precoM}"><br><br>
+                    <div class="campo">
+                        <label for="descricao">Descrição</label>
+                        <input type="text" id="descricao" th:field="*{descricao}" maxlength="255"
+                               placeholder="Ex.: Pão, hambúrguer, queijo e salada">
+                    </div>
 
-        <label>Preço G (opcional):</label>
-        <input type="number" step="0.01" th:field="*{precoG}"><br><br>
+                    <div class="campo">
+                        <label for="categoria">Categoria</label>
+                        <select id="categoria" th:field="*{categoria}">
+                            <option value="Hambúrguer">Hambúrguer</option>
+                            <option value="Acompanhamento">Acompanhamento</option>
+                            <option value="Bebida">Bebida</option>
+                            <option value="Sobremesa">Sobremesa</option>
+                        </select>
+                    </div>
 
-        <label>Categoria:</label>
-        <select th:field="*{categoria}">
-            <option value="Hambúrguer">Hambúrguer</option>
-            <option value="Acompanhamento">Acompanhamento</option>
-            <option value="Bebida">Bebida</option>
-            <option value="Sobremesa">Sobremesa</option>
-        </select><br><br>
+                    <div class="secao">Preços</div>
 
-        <button type="submit">Salvar</button>
-        <a th:href="@{/admin/produtos}">Cancelar</a>
-    </form>
+                    <div class="grade">
+                        <div class="campo">
+                            <label for="preco">Preço</label>
+                            <div class="prefixo">
+                                <span>R$</span>
+                                <input type="number" id="preco" step="0.01" min="0"
+                                       th:field="*{preco}" placeholder="0,00" required>
+                            </div>
+                            <small class="dica">Preço padrão do produto</small>
+                        </div>
+
+                        <div class="campo">
+                            <label for="precoM">Preço M</label>
+                            <div class="prefixo">
+                                <span>R$</span>
+                                <input type="number" id="precoM" step="0.01" min="0"
+                                       th:field="*{precoM}" placeholder="0,00">
+                            </div>
+                            <small class="dica">Opcional</small>
+                        </div>
+
+                        <div class="campo">
+                            <label for="precoG">Preço G</label>
+                            <div class="prefixo">
+                                <span>R$</span>
+                                <input type="number" id="precoG" step="0.01" min="0"
+                                       th:field="*{precoG}" placeholder="0,00">
+                            </div>
+                            <small class="dica">Opcional</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rodape">
+                    <a class="btn btn-sec" th:href="@{/admin/produtos}">Cancelar</a>
+                    <button class="btn btn-primario" type="submit">Salvar produto</button>
+                </div>
+            </form>
+        </div>
+    </main>
 </body>
 </html>

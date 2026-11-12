@@ -42,6 +42,17 @@
         .tamanhos label:hover span { border-color: #b53a00; }
         .tamanhos input:checked + span { background: #b53a00; border-color: #b53a00; color: #fff; }
         .tamanhos input:focus-visible + span { outline: 3px solid rgba(181, 58, 0, .35); }
+        /* Texto do produto ocupa o espaço restante e quebra linha; controles ficam sempre à direita */
+        .item { flex-wrap: nowrap; align-items: center; }
+        .item > div:first-child { flex: 1 1 0; min-width: 0; overflow-wrap: anywhere; }
+        .item .qtd { flex: 0 0 auto; }
+
+        /* Em telas pequenas não cabe tudo na mesma linha: controles descem, alinhados à direita */
+        @media (max-width: 600px) {
+            .item { flex-wrap: wrap; }
+            .item > div:first-child { flex-basis: 100%; }
+            .item .qtd { width: 100%; justify-content: flex-end; }
+}
     </style>
 </head>
 <body>
@@ -94,6 +105,10 @@
                 <span>G<small th:text="'R$ ' + ${#numbers.formatDecimal(p.precoG, 1, 'POINT', 2, 'COMMA')}"></small></span>
             </label>
         </div>
+            <button type="button" onclick="mudar(this, -1)">-</button>
+            <input type="number" th:name="'qtd_' + ${p.id}" value="0" min="0" max="20">
+            <button type="button" onclick="mudar(this, 1)">+</button>
+        </div>
     </div>
 
 </th:block>
@@ -107,12 +122,12 @@
 
     <script>
         function mudar(botao, delta) {
-            var campo = botao.parentElement.querySelector('input');
-            var novo = (parseInt(campo.value) || 0) + delta;
-            if (novo < 0) novo = 0;
-            if (novo > 20) novo = 20;
-            campo.value = novo;
-        }
+        var campo = botao.parentElement.querySelector('input[type="number"]');
+        var novo = (parseInt(campo.value) || 0) + delta;
+        if (novo < 0) novo = 0;
+        if (novo > 20) novo = 20;
+        campo.value = novo;
+    }
     </script>
 </body>
 </html>

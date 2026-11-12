@@ -11,6 +11,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 
 import jakarta.servlet.http.HttpSession;
 
@@ -42,30 +44,48 @@ public class CarrinhoController {
     }
 
     @PostMapping("/carrinho/adicionar-varios")
-    public String adicionarVarios(@RequestParam Map<String, String> params, HttpSession session) {
-        for (Map.Entry<String, String> e : params.entrySet()) {
-            if (!e.getKey().startsWith("qtd_")) continue;
+    private int adicionarItens(Map<String, String> params, HttpSession session) {
+    int adicionados = 0;
+    for (Map.Entry<String, String> e : params.entrySet()) {
+        if (!e.getKey().startsWith("qtd_")) continue;
 
-            int quantidade;
-            try {
-                quantidade = Integer.parseInt(e.getValue());
-            } catch (NumberFormatException ex) {
-                continue;
-            }
-            if (quantidade < 1) continue;
-            if (quantidade > 20) quantidade = 20;
-
-            try {
-                Long id = Long.parseLong(e.getKey().substring(4));
-                Produto produto = service.buscarPorId(id);
-                String tam = tamanhoValido(produto, params.get("tam_" + id));
-                getCarrinho(session).merge(id + "-" + tam, quantidade, Integer::sum);
-            } catch (IllegalArgumentException ex) {
-                // id inválido ou produto inexistente: ignora
-            }
+        int quantidade;
+        try {
+            quantidade = Integer.parseInt(e.getValue());
+        } catch (NumberFormatException ex) {
+            continue;
         }
-        return "redirect:/carrinho";
+        if (quantidade < 1) continue;
+        if (quantidade > 20) quantidade = 20;
+
+        try {
+            Long id = Long.parseLong(e.getKey().substring(4));
+            Produto produto = service.buscarPorId(id);
+            String tam = tamanhoValido(produto, params.get("tam_" + id));
+            getCarrinho(session).merge(id + "-" + tam, quantidade, Integer::sum);
+            adicionados += quantidade;
+        } catch (IllegalArgumentException ex) {
+            // id inválido ou produto inexistente: ignora
+        }
     }
+    return adicionados;
+}
+
+// Reserva: se o JavaScript estiver desligado, o formulário ainda funciona
+@PostMapping("/carrinho/adicionar-varios")
+public String adicionarVarios(@RequestParam Map<String, String> params, HttpSession session) {
+    adicionarItens(params, session);
+    return "redirect:/carrinho";
+}
+
+// Usado pelo cardápio: adiciona e devolve os números, sem redirecionar
+@PostMapping("/carrinho/adicionar-ajax")
+@ResponseBody
+public Map<String, Integer> adicionarAjax(@RequestParam Map<String, String> params, HttpSession session) {
+    int adicionados = adicionarItens(params, session);
+    int totalItens = getCarrinho(session).values().stream().mapToInt(Integer::intValue).sum();
+    return Map.of("totalItens", totalItens, "adicionados", adicionados);
+}
 
     @GetMapping("/carrinho")
     public String ver(HttpSession session, Model model) {

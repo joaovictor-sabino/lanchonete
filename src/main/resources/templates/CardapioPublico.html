@@ -32,6 +32,16 @@
                         border-radius: 20px; text-decoration: none; font-weight: bold; }
         .categorias a:hover { background: #b53a00; color: #fff; }
         h2 { margin-top: 32px; }
+        .qtd { flex-wrap: wrap; justify-content: flex-end; }
+        .tamanhos { display: flex; gap: 6px; margin-right: 8px; }
+        .tamanhos label { position: relative; cursor: pointer; }
+        .tamanhos input { position: absolute; opacity: 0; pointer-events: none; }
+        .tamanhos span { display: block; padding: 6px 14px; border: 2px solid #e0d6cd; border-radius: 20px;
+                        background: #fff; font-weight: bold; color: #666; text-align: center; line-height: 1.2; }
+        .tamanhos small { display: block; font-weight: normal; font-size: 12px; }
+        .tamanhos label:hover span { border-color: #b53a00; }
+        .tamanhos input:checked + span { background: #b53a00; border-color: #b53a00; color: #fff; }
+        .tamanhos input:focus-visible + span { outline: 3px solid rgba(181, 58, 0, .35); }
     </style>
 </head>
 <body>
@@ -46,8 +56,7 @@
     <form th:action="@{/carrinho/adicionar-varios}" method="post">
         <div class="lista">
 
-            <h2>🍔 Comidas</h2>
-            <p class="vazio" th:if="${#maps.isEmpty(categorias)}">Nenhum produto cadastrado.</p>
+            <h2 th:unless="${#lists.isEmpty(comidas)}">🍔 Comidas</h2>
 
         <th:block th:each="e, st : ${categorias}">
 
@@ -71,16 +80,19 @@
                  th:text="${p.preco != null} ? 'R$ ' + ${#numbers.formatDecimal(p.preco, 1, 'POINT', 2, 'COMMA')} : ''"></div>
         </div>
         <div class="qtd">
-            <select th:name="'tam_' + ${p.id}" th:if="${p.precoM != null or p.precoG != null}">
-                <option value="P" th:text="'P - R$ ' + ${#numbers.formatDecimal(p.preco, 1, 'POINT', 2, 'COMMA')}"></option>
-                <option value="M" th:if="${p.precoM != null}"
-                        th:text="'M - R$ ' + ${#numbers.formatDecimal(p.precoM, 1, 'POINT', 2, 'COMMA')}"></option>
-                <option value="G" th:if="${p.precoG != null}"
-                        th:text="'G - R$ ' + ${#numbers.formatDecimal(p.precoG, 1, 'POINT', 2, 'COMMA')}"></option>
-            </select>
-            <button type="button" onclick="mudar(this, -1)">-</button>
-            <input type="number" th:name="'qtd_' + ${p.id}" value="0" min="0" max="20">
-            <button type="button" onclick="mudar(this, 1)">+</button>
+            <div class="tamanhos" th:if="${p.precoM != null or p.precoG != null}">
+            <label>
+                <input type="radio" th:name="'tam_' + ${p.id}" value="P" checked>
+                <span>P<small th:text="'R$ ' + ${#numbers.formatDecimal(p.preco, 1, 'POINT', 2, 'COMMA')}"></small></span>
+            </label>
+            <label th:if="${p.precoM != null}">
+                <input type="radio" th:name="'tam_' + ${p.id}" value="M">
+                <span>M<small th:text="'R$ ' + ${#numbers.formatDecimal(p.precoM, 1, 'POINT', 2, 'COMMA')}"></small></span>
+            </label>
+            <label th:if="${p.precoG != null}">
+                <input type="radio" th:name="'tam_' + ${p.id}" value="G">
+                <span>G<small th:text="'R$ ' + ${#numbers.formatDecimal(p.precoG, 1, 'POINT', 2, 'COMMA')}"></small></span>
+            </label>
         </div>
     </div>
 

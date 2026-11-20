@@ -1,0 +1,139 @@
+/* =====================================================
+   checkout.css  ->  tela /checkout  (templates/checkout.html)
+   ===================================================== */
+
+:root {
+    --cor-primaria: #b53a00;
+    --cor-primaria-hover: #962f00;
+    --cor-primaria-suave: #fbe9e0;
+    --cor-fundo: #fff8f0;
+    --cor-texto: #2b2420;
+    --cor-borda: #e8dcd2;
+    --cor-perigo: #b00020;
+    --sombra: 0 2px 8px rgba(43, 36, 32, .10);
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: var(--cor-fundo);
+    color: var(--cor-texto);
+    margin: 0;
+    padding: 20px;
+}
+
+h1 { text-align: center; color: var(--cor-primaria); }
+
+.conteudo { max-width: 800px; margin: 0 auto; }
+
+/* ---------- Cartões ---------- */
+.cartao {
+    background: #fff;
+    border: 1px solid var(--cor-borda);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: var(--sombra);
+}
+.cartao h2, .cartao h3 { margin-top: 0; color: var(--cor-primaria); }
+
+/* ---------- Resumo do pedido ---------- */
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 8px; text-align: left; border-bottom: 1px solid var(--cor-borda); }
+th { background: var(--cor-primaria); color: #fff; }
+.total {
+    text-align: right;
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--cor-primaria);
+    margin-top: 10px;
+}
+
+/* ---------- Formulário ---------- */
+label { display: block; margin-top: 12px; font-weight: 600; }
+
+input[type=text], input[type=tel], textarea {
+    width: 100%;
+    padding: 10px 12px;
+    box-sizing: border-box;
+    border: 1px solid #d5cfc9;
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: inherit;
+    background: #fff;
+    color: var(--cor-texto);
+}
+textarea { resize: vertical; min-height: 80px; }
+input[type=text]:focus, input[type=tel]:focus, textarea:focus {
+    outline: none;
+    border-color: var(--cor-primaria);
+    box-shadow: 0 0 0 3px rgba(181, 58, 0, .20);
+}
+::placeholder { color: #9a8d84; }
+
+/* Opções de retirada / entrega */
+.opcao {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: normal;
+    padding: 12px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 8px;
+    margin-top: 8px;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+}
+.opcao:hover { border-color: var(--cor-primaria); }
+.opcao:has(input:checked) {
+    border-color: var(--cor-primaria);
+    background: var(--cor-primaria-suave);
+}
+.opcao input { accent-color: var(--cor-primaria); }
+
+/* Campos lado a lado (ex.: número e complemento) */
+.linha { display: flex; gap: 10px; }
+.linha > div { flex: 1; }
+
+/* ---------- Erros de validação ---------- */
+.erros {
+    background: #fdecea;
+    color: var(--cor-perigo);
+    border: 1px solid #f2b8b5;
+    border-radius: 8px;
+    padding: 10px 16px;
+    margin-bottom: 16px;
+}
+
+/* ---------- Botões ---------- */
+.botoes { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+
+a.voltar, button {
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: 0;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background .15s, transform .05s;
+}
+a.voltar:active, button:active { transform: translateY(1px); }
+
+a.voltar { background: #efe7e0; color: var(--cor-texto); }
+a.voltar:hover { background: #e3d8cf; }
+
+button.confirmar { background: var(--cor-primaria); color: #fff; }
+button.confirmar:hover { background: var(--cor-primaria-hover); }
+
+a.voltar:focus-visible, button:focus-visible {
+    outline: 3px solid rgba(181, 58, 0, .35);
+    outline-offset: 2px;
+}
+
+/* ---------- Celular ---------- */
+@media (max-width: 600px) {
+    body { padding: 12px; }
+    .linha { flex-direction: column; gap: 0; }
+    .botoes { flex-direction: column; }
+    .botoes a, .botoes button { display: block; width: 100%; text-align: center; }
+}

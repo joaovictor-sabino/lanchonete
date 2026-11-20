@@ -1,0 +1,99 @@
+/* =====================================================
+   carrinho.css  ->  tela /carrinho  (templates/carrinho.html)
+   ===================================================== */
+
+:root {
+    --cor-primaria: #b53a00;
+    --cor-primaria-hover: #962f00;
+    --cor-fundo: #fff8f0;
+    --cor-texto: #2b2420;
+    --cor-borda: #e8dcd2;
+    --cor-perigo: #c62828;
+    --cor-perigo-hover: #a31f1f;
+    --sombra: 0 2px 8px rgba(43, 36, 32, .10);
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: var(--cor-fundo);
+    color: var(--cor-texto);
+    margin: 0;
+    padding: 20px;
+}
+
+h1 { text-align: center; color: var(--cor-primaria); }
+
+.lista { max-width: 800px; margin: 0 auto; }
+
+/* ---------- Tabela ---------- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--sombra);
+}
+th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--cor-borda); }
+th { background: var(--cor-primaria); color: #fff; }
+tr:last-child td { border-bottom: 0; }
+tr:hover td { background: #fffaf5; }
+
+/* ---------- Total ---------- */
+.total {
+    text-align: right;
+    font-size: 22px;
+    font-weight: bold;
+    color: var(--cor-primaria);
+    margin: 16px 0;
+}
+
+/* ---------- Botões ---------- */
+.botoes { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+
+a.voltar, button {
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: 0;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background .15s, transform .05s;
+}
+a.voltar:active, button:active, a.finalizar:active { transform: translateY(1px); }
+
+a.voltar { background: #efe7e0; color: var(--cor-texto); }
+a.voltar:hover { background: #e3d8cf; }
+
+button.remover { background: var(--cor-perigo); color: #fff; padding: 6px 10px; }
+button.remover:hover { background: var(--cor-perigo-hover); }
+
+button.limpar { background: #6b5f57; color: #fff; }
+button.limpar:hover { background: #544a43; }
+
+a.finalizar {
+    background: var(--cor-primaria);
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 600;
+    transition: background .15s, transform .05s;
+}
+a.finalizar:hover { background: var(--cor-primaria-hover); }
+
+/* Foco visível para quem navega com o teclado */
+a.voltar:focus-visible, button:focus-visible, a.finalizar:focus-visible {
+    outline: 3px solid rgba(181, 58, 0, .35);
+    outline-offset: 2px;
+}
+
+/* ---------- Celular ---------- */
+@media (max-width: 600px) {
+    body { padding: 12px; }
+    th, td { padding: 8px; font-size: 14px; }
+    .botoes { flex-direction: column; }
+    .botoes a, .botoes button { display: block; width: 100%; text-align: center; }
+}

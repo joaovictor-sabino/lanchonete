@@ -1,0 +1,275 @@
+/* =====================================================
+   cardapio-publico.css  ->  tela /cardapio
+   (templates/CardapioPublico.html)
+
+   ATENÇÃO: no <style> original, a regra "@media (max-width: 600px)"
+   ficou sem fechar no lugar certo, então o aviso (toast), o "+N"
+   e as animações só funcionavam no celular. Aqui o @media foi
+   fechado corretamente e essas partes valem em todas as telas.
+   ===================================================== */
+
+:root {
+    --cor-primaria: #b53a00;
+    --cor-primaria-hover: #962f00;
+    --cor-fundo: #fff8f0;
+    --cor-texto: #2b2420;
+    --cor-texto-suave: #6b5f57;
+    --cor-borda: #e8dcd2;
+    --cor-sucesso: #2e7d32;
+    --cor-perigo: #b00020;
+    --sombra: 0 2px 8px rgba(43, 36, 32, .10);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: var(--cor-fundo);
+    color: var(--cor-texto);
+    margin: 0;
+    padding: 20px 20px 100px;   /* espaço embaixo para a barra fixa */
+}
+
+h1 { text-align: center; color: var(--cor-primaria); }
+
+h2 {
+    color: var(--cor-primaria);
+    border-bottom: 2px solid var(--cor-primaria);
+    padding-bottom: 4px;
+    margin-top: 32px;
+    scroll-margin-top: 16px;
+}
+
+.lista { max-width: 800px; margin: 0 auto; }
+
+/* ---------- Carrinho flutuante (canto superior direito) ---------- */
+.carrinho {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 30;
+    background: var(--cor-primaria);
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: bold;
+    box-shadow: 0 3px 10px rgba(43, 36, 32, .25);
+    transition: background .15s;
+}
+.carrinho:hover { background: var(--cor-primaria-hover); }
+
+/* Link "Acompanhar meu pedido" (aparece só depois de fazer um pedido) */
+body > a:not(.carrinho) {
+    display: block;
+    width: fit-content;
+    margin: 0 auto 20px;
+    padding: 8px 18px;
+    background: #fff;
+    color: var(--cor-primaria);
+    border: 2px solid var(--cor-primaria);
+    border-radius: 20px;
+    font-weight: bold;
+    text-decoration: none;
+}
+body > a:not(.carrinho):hover { background: var(--cor-primaria); color: #fff; }
+
+/* ---------- Menu de categorias ---------- */
+.categorias {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 0 auto 24px;
+    max-width: 800px;
+}
+.categorias a {
+    background: #fff;
+    color: var(--cor-primaria);
+    border: 2px solid var(--cor-primaria);
+    padding: 8px 16px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background .15s, color .15s;
+}
+.categorias a:hover { background: var(--cor-primaria); color: #fff; }
+
+/* ---------- Item do cardápio ---------- */
+.item {
+    background: #fff;
+    border: 1px solid var(--cor-borda);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: var(--sombra);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: nowrap;
+    transition: box-shadow .15s;
+}
+.item:hover { box-shadow: 0 4px 14px rgba(43, 36, 32, .16); }
+
+/* Texto do produto ocupa o espaço restante e quebra linha; controles ficam à direita */
+.item > div:first-child { flex: 1 1 0; min-width: 0; overflow-wrap: anywhere; }
+.item .qtd { flex: 0 0 auto; }
+
+.nome  { font-weight: bold; font-size: 18px; }
+.desc  { color: var(--cor-texto-suave); margin-top: 4px; }
+.preco { color: var(--cor-primaria); font-weight: bold; font-size: 18px; margin-top: 4px; }
+.vazio { color: #9a8d84; font-style: italic; }
+
+/* ---------- Quantidade (- 0 +) ---------- */
+.qtd { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.qtd button {
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--cor-primaria);
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    transition: background .15s, transform .05s;
+}
+.qtd button:hover { background: var(--cor-primaria-hover); }
+.qtd button:active { transform: scale(.94); }
+.qtd input {
+    width: 50px;
+    padding: 6px;
+    font-size: 16px;
+    text-align: center;
+    border: 1px solid #d5cfc9;
+    border-radius: 8px;
+}
+.qtd input:focus {
+    outline: none;
+    border-color: var(--cor-primaria);
+    box-shadow: 0 0 0 3px rgba(181, 58, 0, .20);
+}
+
+/* ---------- Escolha de tamanho (P / M / G) ---------- */
+.tamanhos { display: flex; gap: 6px; margin-right: 8px; }
+.tamanhos label { position: relative; cursor: pointer; }
+.tamanhos input { position: absolute; opacity: 0; pointer-events: none; }
+.tamanhos span {
+    display: block;
+    padding: 6px 14px;
+    border: 2px solid #e0d6cd;
+    border-radius: 20px;
+    background: #fff;
+    font-weight: bold;
+    color: var(--cor-texto-suave);
+    text-align: center;
+    line-height: 1.2;
+    transition: border-color .15s, background .15s, color .15s;
+}
+.tamanhos small { display: block; font-weight: normal; font-size: 12px; }
+.tamanhos label:hover span { border-color: var(--cor-primaria); }
+.tamanhos input:checked + span {
+    background: var(--cor-primaria);
+    border-color: var(--cor-primaria);
+    color: #fff;
+}
+.tamanhos input:focus-visible + span { outline: 3px solid rgba(181, 58, 0, .35); }
+
+/* ---------- Barra fixa de baixo ---------- */
+.barra {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    box-shadow: 0 -2px 8px rgba(43, 36, 32, .15);
+    padding: 12px;
+    text-align: center;
+}
+.barra button {
+    background: var(--cor-primaria);
+    color: #fff;
+    border: 0;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s;
+}
+.barra button:hover { background: var(--cor-primaria-hover); }
+.barra button:disabled { opacity: .6; cursor: wait; }
+
+/* ---------- Aviso inferior (toast) ---------- */
+.toast {
+    position: fixed;
+    left: 50%;
+    bottom: 84px;
+    transform: translate(-50%, 20px);
+    opacity: 0;
+    background: var(--cor-sucesso);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 24px;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .25);
+    transition: opacity .25s, transform .25s;
+    pointer-events: none;
+    z-index: 40;
+    max-width: 90%;
+    text-align: center;
+}
+.toast.mostrar { opacity: 1; transform: translate(-50%, 0); }
+.toast.erro { background: var(--cor-perigo); }
+
+/* ---------- Animações do carrinho ---------- */
+.carrinho.bump { animation: bump .5s ease; }
+@keyframes bump {
+    0%   { transform: scale(1); }
+    30%  { transform: scale(1.25); }
+    60%  { transform: scale(.95); }
+    100% { transform: scale(1); }
+}
+
+#contador { display: inline-block; min-width: 1ch; text-align: center; }
+#contador.pulo { animation: pulo .4s ease; }
+@keyframes pulo {
+    0%   { transform: translateY(0); }
+    40%  { transform: translateY(-6px); }
+    100% { transform: translateY(0); }
+}
+
+/* "+N" que sobe a partir do carrinho */
+.mais-n {
+    position: fixed;
+    top: 62px;
+    right: 28px;
+    z-index: 31;
+    pointer-events: none;
+    background: var(--cor-sucesso);
+    color: #fff;
+    font-weight: bold;
+    padding: 3px 10px;
+    border-radius: 12px;
+    animation: subir 1s ease forwards;
+}
+@keyframes subir {
+    0%   { opacity: 0; transform: translateY(10px); }
+    20%  { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-26px); }
+}
+
+/* Respeita quem desativou animações no sistema */
+@media (prefers-reduced-motion: reduce) {
+    .carrinho.bump, #contador.pulo, .mais-n { animation: none; }
+    html { scroll-behavior: auto; }
+}
+
+/* ---------- Celular: controles descem, alinhados à direita ---------- */
+@media (max-width: 600px) {
+    body { padding: 12px 12px 100px; }
+    .item { flex-wrap: wrap; }
+    .item > div:first-child { flex-basis: 100%; }
+    .item .qtd { width: 100%; justify-content: flex-end; }
+    .barra button { width: 100%; }
+}

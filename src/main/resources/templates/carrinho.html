@@ -4,24 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Carrinho</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #fff8f0; margin: 0; padding: 20px; }
-        h1 { text-align: center; color: #b53a00; }
-        .lista { max-width: 800px; margin: 0 auto; }
-        table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 10px; overflow: hidden;
-                box-shadow: 0 2px 6px rgba(0,0,0,.1); }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
-        th { background: #b53a00; color: #fff; }
-        .total { text-align: right; font-size: 22px; font-weight: bold; color: #b53a00; margin: 16px 0; }
-        .botoes { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
-        a.voltar, button { padding: 10px 16px; border-radius: 6px; border: 0; cursor: pointer;
-                           font-size: 16px; text-decoration: none; }
-        a.voltar { background: #eee; color: #333; }
-        button.remover { background: #d33; color: #fff; padding: 6px 10px; }
-        button.limpar { background: #666; color: #fff; }
-        a.finalizar { background: #b53a00; color: #fff; padding: 10px 16px; border-radius: 6px;
-              text-decoration: none; font-size: 16px; }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/carrinho.css}">
 </head>
 <body>
     <h1>🛒 Seu Carrinho</h1>

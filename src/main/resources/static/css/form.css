@@ -1,0 +1,79 @@
+/* =====================================================
+   form.css  ->  tela de cadastro/edição de produto
+   (templates/form.html)
+   Os botões, o cartão e o menu vêm do admin.css.
+   ===================================================== */
+
+:root {
+    --cor-primaria: #b53a00;
+    --cor-texto-suave: #6b5f57;
+}
+
+.form-wrap { max-width: 640px; margin: 0 auto; }
+.form-wrap h2 { margin: 0 0 4px; color: var(--cor-primaria); }
+
+.subtitulo { margin: 0 0 20px; color: var(--cor-texto-suave); font-size: 14px; }
+
+.form-corpo { padding: 24px; }
+
+/* ---------- Campos ---------- */
+.campo { margin-bottom: 18px; }
+.campo label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 14px; }
+.campo input, .campo select {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid #d5cfc9;
+    border-radius: 8px;
+    font-size: 16px;
+    background: #fff;
+    font-family: inherit;
+}
+.campo input:focus, .campo select:focus {
+    outline: none;
+    border-color: var(--cor-primaria);
+    box-shadow: 0 0 0 3px rgba(181, 58, 0, .20);
+}
+.dica { display: block; margin-top: 5px; font-size: 12px; color: #8a7d74; }
+
+/* ---------- Título de seção dentro do formulário ---------- */
+.secao {
+    margin: 26px 0 14px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #f1ebe5;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--cor-primaria);
+}
+
+/* ---------- Grade de 3 colunas (preços P / M / G) ---------- */
+.grade { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+@media (max-width: 600px) { .grade { grid-template-columns: 1fr; } }
+
+/* ---------- Campo com "R$" na frente ---------- */
+.prefixo { position: relative; }
+.prefixo span {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--cor-texto-suave);
+    pointer-events: none;
+}
+.prefixo input { padding-left: 38px; }
+
+/* ---------- Rodapé com botões Salvar / Cancelar ---------- */
+.rodape {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 16px 24px;
+    background: #faf6f2;
+    border-top: 1px solid #eee;
+}
+@media (max-width: 600px) {
+    .form-corpo { padding: 16px; }
+    .rodape { flex-direction: column-reverse; padding: 16px; }
+    .rodape .btn { width: 100%; text-align: center; }
+}

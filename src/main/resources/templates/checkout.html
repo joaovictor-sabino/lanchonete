@@ -4,30 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Finalizar pedido</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #fff8f0; margin: 0; padding: 20px; }
-        h1 { text-align: center; color: #b53a00; }
-        .conteudo { max-width: 800px; margin: 0 auto; }
-        .cartao { background: #fff; border-radius: 10px; padding: 16px; margin-bottom: 16px;
-                  box-shadow: 0 2px 6px rgba(0,0,0,.1); }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 8px; text-align: left; border-bottom: 1px solid #eee; }
-        th { background: #b53a00; color: #fff; }
-        .total { text-align: right; font-size: 20px; font-weight: bold; color: #b53a00; margin-top: 10px; }
-        label { display: block; margin-top: 12px; font-weight: bold; }
-        input[type=text], input[type=tel], textarea { width: 100%; padding: 8px; box-sizing: border-box;
-                  border: 1px solid #ccc; border-radius: 6px; font-size: 16px; }
-        .opcao { display: flex; align-items: center; gap: 8px; font-weight: normal; padding: 10px;
-                 border: 1px solid #ddd; border-radius: 6px; margin-top: 8px; cursor: pointer; }
-        .linha { display: flex; gap: 10px; }
-        .linha > div { flex: 1; }
-        .erros { background: #fdecea; color: #b00020; border-radius: 8px; padding: 10px 16px; margin-bottom: 16px; }
-        .botoes { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
-        a.voltar, button { padding: 10px 16px; border-radius: 6px; border: 0; cursor: pointer;
-                           font-size: 16px; text-decoration: none; }
-        a.voltar { background: #eee; color: #333; }
-        button.confirmar { background: #b53a00; color: #fff; }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/checkout.css}">
 </head>
 <body>
     <h1>Finalizar pedido</h1>

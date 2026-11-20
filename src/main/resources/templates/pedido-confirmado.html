@@ -5,27 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Pedido confirmado</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #fff8f0; margin: 0; padding: 20px; }
-        h1 { text-align: center; color: #2e7d32; }
-        .conteudo { max-width: 800px; margin: 0 auto; }
-        .cartao { background: #fff; border-radius: 10px; padding: 16px; margin-bottom: 16px;
-                  box-shadow: 0 2px 6px rgba(0,0,0,.1); }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 8px; text-align: left; border-bottom: 1px solid #eee; }
-        th { background: #b53a00; color: #fff; }
-        .total { text-align: right; font-size: 20px; font-weight: bold; color: #b53a00; margin-top: 10px; }
-        a.voltar { display: inline-block; padding: 10px 16px; border-radius: 6px; background: #b53a00;
-                   color: #fff; text-decoration: none; }
-        .status-box { border-radius: 10px; padding: 16px; margin-bottom: 16px; text-align: center; }
-        .status-box h3 { margin: 0 0 6px; }
-        .status-box p { margin: 0; }
-        .st-NOVO { background: #fff3cd; color: #8a6d00; }
-        .st-EM_PREPARO { background: #ffe0b2; color: #e65100; }
-        .st-PRONTO { background: #d1ecf1; color: #0c5460; }
-        .st-FINALIZADO { background: #d4edda; color: #1b5e20; }
-        .st-CANCELADO { background: #f8d7da; color: #b00020; }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/pedido-confirmado.css}">
 </head>
 <body>
     <h1>✅ Pedido confirmado!</h1>

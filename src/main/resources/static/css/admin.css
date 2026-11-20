@@ -1,0 +1,153 @@
+/* =====================================================
+   admin.css  ->  base de TODAS as telas do admin
+   (menu, botões, cartões, tabelas, etiquetas)
+
+   Vem de templates/fragments/admin.html e vale para:
+   cardapio.html (produtos), form.html e admin-pedidos.html
+   ===================================================== */
+
+:root {
+    --cor-primaria: #b53a00;
+    --cor-primaria-hover: #962f00;
+    --cor-fundo-admin: #f4f1ee;
+    --cor-texto: #2b2420;
+    --cor-texto-suave: #6b5f57;
+    --cor-borda: #e8dcd2;
+    --cor-perigo: #b00020;
+    --sombra: 0 2px 8px rgba(43, 36, 32, .10);
+}
+
+* { box-sizing: border-box; }
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: var(--cor-fundo-admin);
+    color: var(--cor-texto);
+    margin: 0;
+}
+
+/* ---------- Menu do topo ---------- */
+.topo {
+    background: var(--cor-primaria);
+    color: #fff;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    box-shadow: 0 2px 6px rgba(43, 36, 32, .2);
+}
+.topo h1 { margin: 0; font-size: 22px; }
+
+.abas { display: flex; gap: 6px; }
+.abas a {
+    color: #fff;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    opacity: .85;
+    transition: background .15s, opacity .15s;
+}
+.abas a:hover { opacity: 1; background: rgba(255, 255, 255, .15); }
+.abas a.ativa { background: #fff; color: var(--cor-primaria); opacity: 1; }
+
+/* ---------- Área da página ---------- */
+.pagina { max-width: 1100px; margin: 24px auto; padding: 0 16px; }
+
+.barra {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+.barra form { display: flex; gap: 8px; }
+
+/* ---------- Campos ---------- */
+input[type=text], select {
+    padding: 9px 12px;
+    border: 1px solid #d5cfc9;
+    border-radius: 8px;
+    font-size: 15px;
+    background: #fff;
+    color: var(--cor-texto);
+}
+input[type=text]:focus, select:focus {
+    outline: none;
+    border-color: var(--cor-primaria);
+    box-shadow: 0 0 0 3px rgba(181, 58, 0, .20);
+}
+
+/* ---------- Botões ---------- */
+.btn {
+    display: inline-block;
+    padding: 9px 16px;
+    border-radius: 8px;
+    border: 0;
+    cursor: pointer;
+    font-size: 15px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background .15s, transform .05s;
+}
+.btn:active { transform: translateY(1px); }
+.btn:focus-visible { outline: 3px solid rgba(181, 58, 0, .35); outline-offset: 2px; }
+
+.btn-primario { background: var(--cor-primaria); color: #fff; }
+.btn-primario:hover { background: var(--cor-primaria-hover); }
+
+.btn-sec { background: #e9e4df; color: var(--cor-texto); }
+.btn-sec:hover { background: #ddd5ce; }
+
+.btn-perigo { background: #fdecea; color: var(--cor-perigo); }
+.btn-perigo:hover { background: #f8d0cc; }
+
+/* .btn-sm é usado em admin-pedidos.html e não existia: agora igual ao pequeno */
+.btn-pequeno, .btn-sm { padding: 6px 12px; font-size: 14px; }
+
+/* ---------- Cartão e tabela ---------- */
+.cartao {
+    background: #fff;
+    border: 1px solid var(--cor-borda);
+    border-radius: 12px;
+    box-shadow: var(--sombra);
+    overflow-x: auto;
+}
+
+table { width: 100%; border-collapse: collapse; }
+th {
+    background: #faf6f2;
+    text-align: left;
+    padding: 12px 14px;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--cor-texto-suave);
+}
+td { padding: 12px 14px; border-top: 1px solid #eee; vertical-align: middle; }
+tr:hover td { background: #fffaf5; }
+
+/* ---------- Etiqueta, vazio, ações ---------- */
+.etiqueta {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    background: #eee7e0;
+    color: var(--cor-texto);
+}
+.vazio { text-align: center; padding: 40px; color: var(--cor-texto-suave); }
+
+.acoes { display: flex; gap: 6px; align-items: center; }
+.acoes form { margin: 0; }
+
+/* ---------- Celular ---------- */
+@media (max-width: 600px) {
+    .topo { padding: 12px 16px; }
+    .abas a { padding: 6px 12px; }
+    th, td { padding: 10px 8px; font-size: 14px; }
+}

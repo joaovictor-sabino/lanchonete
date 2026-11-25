@@ -7,6 +7,17 @@
     <link rel="stylesheet" th:href="@{/css/cardapio-publico.css}">
 </head>
 <body>
+    <div class="conta">
+        <a th:if="${usuarioLogado == null}" th:href="@{/login}">🔐 Entrar</a>
+
+        <th:block th:if="${usuarioLogado != null}">
+            <span th:text="'Olá, ' + ${usuarioLogado}"></span>
+            <a th:if="${ehAdmin}" th:href="@{/admin/produtos}">⚙️ Painel</a>
+            <form th:action="@{/logout}" method="post">
+                <button type="submit">Sair</button>
+            </form>
+    </th:block>
+    </div>
     <a class="carrinho" id="pillCarrinho" th:href="@{/carrinho}">🛒 Carrinho (<span id="contador" th:text="${totalItens}">0</span>)</a>
 
     <h1>🍔 Nosso Cardápio</h1>

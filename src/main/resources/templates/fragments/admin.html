@@ -12,6 +12,10 @@
             <a th:href="@{/admin/produtos}" th:classappend="${ativa == 'produtos'} ? 'ativa'">Produtos</a>
             <a th:href="@{/admin/pedidos}" th:classappend="${ativa == 'pedidos'} ? 'ativa'">Pedidos</a>
             <a th:href="@{/cardapio}" target="_blank">Ver cardápio ↗</a>
+            <form th:action="@{/logout}" method="post" style="display:inline; margin:0">
+                <button type="submit" style="background:none; border:0; color:#fff; font-weight:600;
+                        cursor:pointer; padding:8px 16px; opacity:.8; font-size:inherit">Sair</button>
+            </form>
         </nav>
     </header>
 </body>

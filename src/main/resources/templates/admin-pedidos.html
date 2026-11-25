@@ -2,90 +2,143 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Pedidos - Administração</title>
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
     <th:block th:replace="~{fragments/admin :: estilo}"></th:block>
     <link rel="stylesheet" th:href="@{/css/admin-pedidos.css}">
 </head>
 <body>
     <header th:replace="~{fragments/admin :: menu('pedidos')}"></header>
 
-    <main class="pagina">
-        <div class="barra">
-            <div class="filtros">
-                <a class="btn btn-sm" th:classappend="${statusAtual == null} ? 'btn-primario' : 'btn-sec'"
-                   th:href="@{/admin/pedidos}">Todos</a>
-                <a th:each="s : ${todosStatus}" class="btn"
-                   th:classappend="${statusAtual == s} ? 'btn-primario' : 'btn-sec'"
-                   th:href="@{/admin/pedidos(status=${s.name()})}" th:text="${s.descricao}"></a>
-            </div>
-        </div>
+    <main class="pagina kanban-pagina">
+        <p class="dica-kanban">Arraste os cartões entre as colunas para atualizar o status do pedido.</p>
 
-        <p class="vazio" th:if="${#lists.isEmpty(pedidos)}">Nenhum pedido encontrado.</p>
+        <div class="kanban">
+            <section class="coluna" th:each="col : ${colunas}" th:classappend="'col-' + ${col.key.name()}">
+                <header class="coluna-topo">
+                    <h3 th:text="${col.key.descricao}"></h3>
+                    <span class="contagem" th:text="${#lists.size(col.value)}">0</span>
+                </header>
 
-        <div class="pedido" th:each="p : ${pedidos}">
-            <div class="pedido-topo">
-                <div>
-                    <strong th:text="'Pedido nº ' + ${p.id}"></strong>
-                    <span th:text="${#temporals.format(p.criadoEm, 'dd/MM/yyyy HH:mm')}"></span>
+                <div class="coluna-corpo" th:data-status="${col.key.name()}">
+
+                    <article class="cartao-pedido" draggable="true"
+                             th:each="p : ${col.value}" th:data-id="${p.id}">
+
+                        <div class="cp-topo">
+                            <strong th:text="'#' + ${p.id}"></strong>
+                            <span class="hora" th:text="${#temporals.format(p.criadoEm, 'dd/MM HH:mm')}"></span>
+                        </div>
+
+                        <div class="cp-cliente">
+                            <strong th:text="${p.nomeCliente}"></strong>
+                            <span th:text="${p.telefone}"></span>
+                        </div>
+
+                        <span class="tipo" th:classappend="${p.entrega} ? 'tipo-entrega' : 'tipo-retirada'"
+                              th:text="${p.entrega} ? '🛵 Entrega' : '🏪 Retirar no local'"></span>
+
+                        <p class="cp-endereco" th:if="${p.entrega}"
+                           th:text="${p.rua} + ', ' + ${p.numero} + (${p.complemento} != null ? ' - ' + ${p.complemento} : '') + ' · ' + ${p.bairro} + ' · ' + ${p.cidade}"></p>
+
+                        <ul class="cp-itens">
+                            <li th:each="i : ${p.itens}">
+                                <span th:text="${i.quantidade} + 'x ' + ${i.nomeProduto}"></span>
+                                <strong th:if="${i.tamanho != 'U'}" th:text="'(' + ${i.tamanho} + ')'"></strong>
+                            </li>
+                        </ul>
+
+                        <p class="cp-obs" th:if="${p.observacoes != null}" th:text="'📝 ' + ${p.observacoes}"></p>
+
+                        <div class="cp-total"
+                             th:text="'R$ ' + ${#numbers.formatDecimal(p.total, 1, 'POINT', 2, 'COMMA')}"></div>
+                    </article>
+
                 </div>
-                <div>
-                    <span class="etiqueta" th:classappend="${p.entrega} ? 'tipo-entrega' : 'tipo-retirada'"
-                          th:text="${p.entrega} ? '🛵 Entrega' : '🏪 Retirar no local'"></span>
-                    <span class="etiqueta" th:classappend="'st-' + ${p.status.name()}"
-                          th:text="${p.status.descricao}"></span>
-                </div>
-            </div>
-
-            <div class="pedido-corpo">
-                <div>
-                    <h4>Cliente</h4>
-                    <p><strong th:text="${p.nomeCliente}"></strong></p>
-                    <p th:text="'Tel: ' + ${p.telefone}"></p>
-
-                    <h4 style="margin-top:14px">Recebimento</h4>
-                    <div th:if="${p.entrega}">
-                        <p th:text="${p.rua} + ', ' + ${p.numero}"></p>
-                        <p th:if="${p.complemento != null}" th:text="${p.complemento}"></p>
-                        <p th:text="${p.bairro} + ' - ' + ${p.cidade}"></p>
-                        <p th:if="${p.cep != null}" th:text="'CEP: ' + ${p.cep}"></p>
-                    </div>
-                    <p th:unless="${p.entrega}">Cliente vai retirar no local.</p>
-
-                    <div th:if="${p.observacoes != null}">
-                        <h4 style="margin-top:14px">Observações</h4>
-                        <p th:text="${p.observacoes}"></p>
-                    </div>
-                </div>
-
-                <div>
-                    <h4>Itens</h4>
-                    <table class="itens">
-                        <thead><tr><th>Item</th><th>Qtd</th><th>Subtotal</th></tr></thead>
-                        <tbody>
-                            <tr th:each="i : ${p.itens}">
-                                <td>
-                                    <span th:text="${i.nomeProduto}"></span>
-                                    <strong th:if="${i.tamanho != 'U'}" th:text="'(' + ${i.tamanho} + ')'"></strong>
-                                </td>
-                                <td th:text="${i.quantidade}"></td>
-                                <td th:text="'R$ ' + ${#numbers.formatDecimal(i.subtotal, 1, 'POINT', 2, 'COMMA')}"></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="total"
-                 th:text="'Total: R$ ' + ${#numbers.formatDecimal(p.total, 1, 'POINT', 2, 'COMMA')}"></div>
-
-            <form class="muda-status" th:action="@{/admin/pedidos/{id}/status(id=${p.id})}" method="post">
-                <label>Alterar status:</label>
-                <select name="status">
-                    <option th:each="s : ${todosStatus}" th:value="${s.name()}"
-                            th:text="${s.descricao}" th:selected="${s == p.status}"></option>
-                </select>
-                <button class="btn btn-primario btn-pequeno" type="submit">Atualizar</button>
-            </form>
+            </section>
         </div>
     </main>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+        var token  = document.querySelector('meta[name="_csrf"]').content;
+        var header = document.querySelector('meta[name="_csrf_header"]').content;
+        var arrastado = null;
+        var origem = null;
+
+        function toast(msg) {
+            var t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('mostrar');
+            setTimeout(function () { t.classList.remove('mostrar'); }, 2500);
+        }
+
+        function atualizarContagens() {
+            document.querySelectorAll('.coluna').forEach(function (col) {
+                col.querySelector('.contagem').textContent =
+                    col.querySelectorAll('.cartao-pedido').length;
+            });
+        }
+
+        document.querySelectorAll('.cartao-pedido').forEach(function (c) {
+            c.addEventListener('dragstart', function (e) {
+                arrastado = c;
+                origem = c.parentElement;
+                c.classList.add('arrastando');
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', c.dataset.id);
+            });
+            c.addEventListener('dragend', function () {
+                c.classList.remove('arrastando');
+                arrastado = null;
+                document.querySelectorAll('.coluna').forEach(function (col) { col.classList.remove('alvo'); });
+            });
+        });
+
+        document.querySelectorAll('.coluna-corpo').forEach(function (corpo) {
+            var coluna = corpo.parentElement;
+
+            corpo.addEventListener('dragover', function (e) {
+                e.preventDefault();
+                coluna.classList.add('alvo');
+            });
+            corpo.addEventListener('dragleave', function (e) {
+                if (!corpo.contains(e.relatedTarget)) coluna.classList.remove('alvo');
+            });
+            corpo.addEventListener('drop', function (e) {
+                e.preventDefault();
+                coluna.classList.remove('alvo');
+                if (!arrastado || corpo === origem) return;
+
+                var cartao = arrastado;
+                var voltarPara = origem;
+
+                // move na tela já, e desfaz se o servidor recusar
+                corpo.prepend(cartao);
+                atualizarContagens();
+
+                var headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
+                headers[header] = token;
+
+                fetch('/admin/pedidos/' + cartao.dataset.id + '/mover', {
+                    method: 'POST',
+                    headers: headers,
+                    body: new URLSearchParams({ status: corpo.dataset.status })
+                })
+                .then(function (r) { if (!r.ok) throw new Error('falha'); })
+                .catch(function () {
+                    voltarPara.prepend(cartao);
+                    atualizarContagens();
+                    toast('Não foi possível atualizar o pedido. Tente novamente.');
+                });
+            });
+        });
+
+        // novos pedidos aparecem sozinhos, sem interromper um arraste
+        setInterval(function () {
+            if (!arrastado && !document.hidden) location.reload();
+        }, 30000);
+    </script>
 </body>
 </html>

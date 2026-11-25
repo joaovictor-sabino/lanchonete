@@ -273,3 +273,11 @@ body > a:not(.carrinho):hover { background: var(--cor-primaria); color: #fff; }
     .item .qtd { width: 100%; justify-content: flex-end; }
     .barra button { width: 100%; }
 }
+
+.conta { position: fixed; top: 16px; left: 16px; z-index: 30; display: flex; align-items: center; gap: 10px;
+         background: #fff; padding: 6px 14px; border-radius: 22px; box-shadow: 0 2px 8px rgba(0,0,0,.15);
+         font-size: 14px; }
+.conta a, .conta button { color: #b53a00; font-weight: bold; text-decoration: none; background: none;
+                          border: 0; cursor: pointer; font-size: 14px; padding: 0; }
+.conta a:hover, .conta button:hover { text-decoration: underline; }
+.conta form { margin: 0; }

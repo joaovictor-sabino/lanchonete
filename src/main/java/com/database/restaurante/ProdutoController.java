@@ -23,7 +23,7 @@ public class ProdutoController {
 
     @GetMapping("/")
     public String inicio() {
-        return "redirect:/admin/produtos";
+        return "redirect:/cardapio";
     }
 
     @GetMapping("/admin/produtos")

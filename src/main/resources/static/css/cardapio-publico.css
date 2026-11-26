@@ -1,223 +1,207 @@
-/* =====================================================
-   cardapio-publico.css  ->  tela /cardapio
-   (templates/CardapioPublico.html)
-
-   ATENÇÃO: no <style> original, a regra "@media (max-width: 600px)"
-   ficou sem fechar no lugar certo, então o aviso (toast), o "+N"
-   e as animações só funcionavam no celular. Aqui o @media foi
-   fechado corretamente e essas partes valem em todas as telas.
-   ===================================================== */
-
 :root {
     --cor-primaria: #b53a00;
     --cor-primaria-hover: #962f00;
+    --cor-escura: #1f1410;
+    --cor-ouro: #f0a24a;
     --cor-fundo: #fff8f0;
     --cor-texto: #2b2420;
-    --cor-texto-suave: #6b5f57;
-    --cor-borda: #e8dcd2;
+    --cor-suave: #6b5f57;
+    --cor-borda: #eadfd5;
     --cor-sucesso: #2e7d32;
     --cor-perigo: #b00020;
-    --sombra: 0 2px 8px rgba(43, 36, 32, .10);
+    --altura-topo: 58px;
+    --sombra: 0 4px 18px rgba(43, 36, 32, .10);
+    --sombra-forte: 0 14px 34px rgba(43, 36, 32, .22);
 }
 
+* { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 
 body {
-    font-family: 'Segoe UI', Arial, sans-serif;
+    font-family: 'Segoe UI', system-ui, Arial, sans-serif;
     background: var(--cor-fundo);
     color: var(--cor-texto);
     margin: 0;
-    padding: 20px 20px 100px;   /* espaço embaixo para a barra fixa */
+    padding-bottom: 110px;
 }
 
-h1 { text-align: center; color: var(--cor-primaria); }
-
-h2 {
-    color: var(--cor-primaria);
-    border-bottom: 2px solid var(--cor-primaria);
-    padding-bottom: 4px;
-    margin-top: 32px;
-    scroll-margin-top: 16px;
+/* ---------- Topo fixo: login (esquerda) e carrinho (direita) ---------- */
+.topo {
+    position: sticky; top: 0; z-index: 30;
+    height: var(--altura-topo);
+    padding: 0 16px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    background: rgba(31, 20, 16, .92);
+    backdrop-filter: blur(10px);
 }
+.conta {
+    display: flex; align-items: center; gap: 10px; white-space: nowrap;
+    background: rgba(255, 255, 255, .12); color: #fff;
+    padding: 6px 14px; border-radius: 22px; font-size: 14px;
+}
+.conta a, .conta button {
+    color: var(--cor-ouro); font-weight: 700; text-decoration: none;
+    background: none; border: 0; cursor: pointer; font-size: 14px; padding: 0; font-family: inherit;
+}
+.conta a:hover, .conta button:hover { text-decoration: underline; }
+.conta form { margin: 0; }
 
-.lista { max-width: 800px; margin: 0 auto; }
-
-/* ---------- Carrinho flutuante (canto superior direito) ---------- */
 .carrinho {
-    position: fixed;
-    top: 16px;
-    right: 16px;
-    z-index: 30;
-    background: var(--cor-primaria);
-    color: #fff;
-    padding: 10px 16px;
-    border-radius: 20px;
-    text-decoration: none;
-    font-weight: bold;
-    box-shadow: 0 3px 10px rgba(43, 36, 32, .25);
+    background: var(--cor-primaria); color: #fff;
+    padding: 9px 16px; border-radius: 22px;
+    text-decoration: none; font-weight: 700; white-space: nowrap;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, .35);
     transition: background .15s;
 }
 .carrinho:hover { background: var(--cor-primaria-hover); }
 
-/* Link "Acompanhar meu pedido" (aparece só depois de fazer um pedido) */
-body > a:not(.carrinho) {
-    display: block;
-    width: fit-content;
-    margin: 0 auto 20px;
-    padding: 8px 18px;
-    background: #fff;
-    color: var(--cor-primaria);
-    border: 2px solid var(--cor-primaria);
-    border-radius: 20px;
-    font-weight: bold;
-    text-decoration: none;
+/* ---------- Faixa de abertura ---------- */
+.hero {
+    text-align: center;
+    padding: 44px 20px 36px;
+    color: #fff6ea;
+    background:
+        radial-gradient(ellipse at 85% 0%, rgba(240, 162, 74, .55), transparent 55%),
+        radial-gradient(ellipse at 10% 100%, rgba(181, 58, 0, .45), transparent 50%),
+        var(--cor-escura);
 }
-body > a:not(.carrinho):hover { background: var(--cor-primaria); color: #fff; }
+.hero-sobre { margin: 0; letter-spacing: .35em; text-transform: uppercase; font-size: 12px; font-weight: 700; color: var(--cor-ouro); }
+.hero h1 { margin: 8px 0 10px; font-size: clamp(34px, 7vw, 56px); line-height: 1.05; font-weight: 800; letter-spacing: -.02em; color: #fff; }
+.hero-sub { margin: 0 auto; max-width: 460px; color: #e9d7c4; font-size: 16px; }
+.acompanhar {
+    display: inline-block; margin-top: 18px; padding: 9px 20px; border-radius: 22px;
+    background: var(--cor-ouro); color: var(--cor-escura); font-weight: 700; text-decoration: none;
+}
+.acompanhar:hover { background: #ffb85f; }
 
-/* ---------- Menu de categorias ---------- */
+/* ---------- Menu de categorias (fica fixo ao rolar) ---------- */
 .categorias {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin: 0 auto 24px;
-    max-width: 800px;
+    position: sticky; top: var(--altura-topo); z-index: 20;
+    display: flex; justify-content: center; gap: 8px;
+    padding: 12px 16px; overflow-x: auto; scrollbar-width: none;
+    background: rgba(255, 248, 240, .92); backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--cor-borda);
 }
+.categorias::-webkit-scrollbar { display: none; }
 .categorias a {
-    background: #fff;
-    color: var(--cor-primaria);
+    flex: 0 0 auto;
+    background: #fff; color: var(--cor-primaria);
     border: 2px solid var(--cor-primaria);
-    padding: 8px 16px;
-    border-radius: 20px;
-    text-decoration: none;
-    font-weight: bold;
+    padding: 7px 16px; border-radius: 22px;
+    text-decoration: none; font-weight: 700;
     transition: background .15s, color .15s;
 }
 .categorias a:hover { background: var(--cor-primaria); color: #fff; }
 
-/* ---------- Item do cardápio ---------- */
+/* ---------- Lista e títulos ---------- */
+.lista { max-width: 1100px; margin: 0 auto; padding: 8px 20px 0; }
+.secao-cat { margin-top: 36px; }
+.secao-cat h2 {
+    display: flex; align-items: center; gap: 10px;
+    margin: 0 0 18px;
+    font-size: clamp(24px, 4vw, 32px); font-weight: 800; color: var(--cor-escura);
+    scroll-margin-top: calc(var(--altura-topo) + 72px);
+}
+.vazio { text-align: center; color: #9a8d84; font-style: italic; padding: 40px 0; }
+
+/* ---------- Cartão do produto ---------- */
+.grade { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 22px; }
+
 .item {
-    background: #fff;
-    border: 1px solid var(--cor-borda);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 12px;
+    display: flex; flex-direction: column;
+    background: #fff; border-radius: 20px; overflow: hidden;
     box-shadow: var(--sombra);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: nowrap;
-    transition: box-shadow .15s;
+    transition: transform .25s ease, box-shadow .25s ease;
 }
-.item:hover { box-shadow: 0 4px 14px rgba(43, 36, 32, .16); }
+.item:hover { transform: translateY(-5px); box-shadow: var(--sombra-forte); }
 
-/* Texto do produto ocupa o espaço restante e quebra linha; controles ficam à direita */
-.item > div:first-child { flex: 1 1 0; min-width: 0; overflow-wrap: anywhere; }
-.item .qtd { flex: 0 0 auto; }
-
-.nome  { font-weight: bold; font-size: 18px; }
-.desc  { color: var(--cor-texto-suave); margin-top: 4px; }
-.preco { color: var(--cor-primaria); font-weight: bold; font-size: 18px; margin-top: 4px; }
-.vazio { color: #9a8d84; font-style: italic; }
-
-/* ---------- Quantidade (- 0 +) ---------- */
-.qtd { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
-.qtd button {
-    width: 36px;
-    height: 36px;
-    border: 0;
-    border-radius: 8px;
-    background: var(--cor-primaria);
-    color: #fff;
-    font-size: 20px;
-    cursor: pointer;
-    transition: background .15s, transform .05s;
+.foto { position: relative; aspect-ratio: 4 / 5; overflow: hidden; background: #f3e4d3; }
+.foto img {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; object-position: center 62%;
+    transition: transform .6s ease;
 }
-.qtd button:hover { background: var(--cor-primaria-hover); }
-.qtd button:active { transform: scale(.94); }
-.qtd input {
-    width: 50px;
-    padding: 6px;
-    font-size: 16px;
-    text-align: center;
-    border: 1px solid #d5cfc9;
-    border-radius: 8px;
-}
-.qtd input:focus {
-    outline: none;
-    border-color: var(--cor-primaria);
-    box-shadow: 0 0 0 3px rgba(181, 58, 0, .20);
-}
+.item:hover .foto img { transform: scale(1.06); }
 
-/* ---------- Escolha de tamanho (P / M / G) ---------- */
-.tamanhos { display: flex; gap: 6px; margin-right: 8px; }
-.tamanhos label { position: relative; cursor: pointer; }
+.preco-tag {
+    position: absolute; left: 12px; bottom: 12px;
+    display: flex; flex-direction: column; line-height: 1.15;
+    background: rgba(31, 20, 16, .78); backdrop-filter: blur(6px);
+    color: #fff; padding: 6px 14px; border-radius: 16px;
+}
+.preco-tag small { font-size: 11px; opacity: .85; }
+.preco-tag b { font-size: 16px; }
+
+.info { padding: 16px 18px 6px; }
+.nome { margin: 0; font-size: 20px; font-weight: 800; color: var(--cor-escura); }
+.desc { margin: 6px 0 0; color: var(--cor-suave); font-size: 14px; line-height: 1.45; }
+
+.controles { margin-top: auto; padding: 12px 18px 18px; display: flex; flex-direction: column; gap: 12px; }
+
+/* ---------- Tamanhos (P / M / G) ---------- */
+.tamanhos { display: flex; gap: 6px; }
+.tamanhos label { flex: 1; position: relative; cursor: pointer; }
 .tamanhos input { position: absolute; opacity: 0; pointer-events: none; }
 .tamanhos span {
-    display: block;
-    padding: 6px 14px;
-    border: 2px solid #e0d6cd;
-    border-radius: 20px;
-    background: #fff;
-    font-weight: bold;
-    color: var(--cor-texto-suave);
-    text-align: center;
-    line-height: 1.2;
+    display: block; padding: 6px 4px;
+    border: 2px solid #e0d6cd; border-radius: 14px; background: #fff;
+    font-weight: 800; color: var(--cor-suave); text-align: center; line-height: 1.2;
     transition: border-color .15s, background .15s, color .15s;
 }
-.tamanhos small { display: block; font-weight: normal; font-size: 12px; }
+.tamanhos small { display: block; font-weight: 500; font-size: 12px; }
 .tamanhos label:hover span { border-color: var(--cor-primaria); }
-.tamanhos input:checked + span {
-    background: var(--cor-primaria);
-    border-color: var(--cor-primaria);
-    color: #fff;
-}
+.tamanhos input:checked + span { background: var(--cor-primaria); border-color: var(--cor-primaria); color: #fff; }
 .tamanhos input:focus-visible + span { outline: 3px solid rgba(181, 58, 0, .35); }
 
-/* ---------- Barra fixa de baixo ---------- */
+/* ---------- Quantidade ---------- */
+.qtd { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.rotulo { font-size: 13px; font-weight: 700; color: var(--cor-suave); text-transform: uppercase; letter-spacing: .05em; }
+.stepper { display: flex; align-items: center; gap: 6px; }
+.stepper button {
+    width: 38px; height: 38px; border: 0; border-radius: 50%;
+    background: var(--cor-primaria); color: #fff;
+    font-size: 22px; line-height: 1; cursor: pointer;
+    transition: background .15s, transform .08s;
+}
+.stepper button:hover { background: var(--cor-primaria-hover); }
+.stepper button:active { transform: scale(.9); }
+.stepper input {
+    width: 48px; height: 38px; padding: 0;
+    font-size: 17px; font-weight: 700; text-align: center;
+    border: 2px solid #e0d6cd; border-radius: 12px;
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+.stepper input::-webkit-outer-spin-button,
+.stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.stepper input:focus { outline: none; border-color: var(--cor-primaria); box-shadow: 0 0 0 3px rgba(181, 58, 0, .2); }
+
+/* ---------- Barra de baixo ---------- */
 .barra {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #fff;
-    box-shadow: 0 -2px 8px rgba(43, 36, 32, .15);
-    padding: 12px;
-    text-align: center;
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 25;
+    padding: 14px 16px 18px; text-align: center; pointer-events: none;
+    background: linear-gradient(to top, rgba(255, 248, 240, .98) 55%, rgba(255, 248, 240, 0));
 }
 .barra button {
-    background: var(--cor-primaria);
-    color: #fff;
-    border: 0;
-    padding: 12px 24px;
-    border-radius: 10px;
-    font-size: 18px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background .15s;
+    pointer-events: auto;
+    background: var(--cor-primaria); color: #fff; border: 0;
+    padding: 14px 30px; border-radius: 30px;
+    font-size: 17px; font-weight: 700; cursor: pointer;
+    box-shadow: 0 8px 22px rgba(181, 58, 0, .45);
+    transition: background .15s, transform .1s;
 }
-.barra button:hover { background: var(--cor-primaria-hover); }
-.barra button:disabled { opacity: .6; cursor: wait; }
+.barra button:hover { background: var(--cor-primaria-hover); transform: translateY(-2px); }
+.barra button:disabled { opacity: .6; cursor: wait; transform: none; }
 
-/* ---------- Aviso inferior (toast) ---------- */
+/* ---------- Aviso (toast) ---------- */
 .toast {
-    position: fixed;
-    left: 50%;
-    bottom: 84px;
-    transform: translate(-50%, 20px);
-    opacity: 0;
-    background: var(--cor-sucesso);
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 24px;
-    font-weight: bold;
+    position: fixed; left: 50%; bottom: 92px;
+    transform: translate(-50%, 20px); opacity: 0;
+    background: var(--cor-sucesso); color: #fff;
+    padding: 10px 20px; border-radius: 24px; font-weight: 700;
     box-shadow: 0 4px 12px rgba(0, 0, 0, .25);
     transition: opacity .25s, transform .25s;
-    pointer-events: none;
-    z-index: 40;
-    max-width: 90%;
-    text-align: center;
+    pointer-events: none; z-index: 40; max-width: 90%; text-align: center;
 }
 .toast.mostrar { opacity: 1; transform: translate(-50%, 0); }
 .toast.erro { background: var(--cor-perigo); }
@@ -225,59 +209,49 @@ body > a:not(.carrinho):hover { background: var(--cor-primaria); color: #fff; }
 /* ---------- Animações do carrinho ---------- */
 .carrinho.bump { animation: bump .5s ease; }
 @keyframes bump {
-    0%   { transform: scale(1); }
-    30%  { transform: scale(1.25); }
-    60%  { transform: scale(.95); }
-    100% { transform: scale(1); }
+    0% { transform: scale(1); } 30% { transform: scale(1.25); } 60% { transform: scale(.95); } 100% { transform: scale(1); }
 }
-
 #contador { display: inline-block; min-width: 1ch; text-align: center; }
 #contador.pulo { animation: pulo .4s ease; }
 @keyframes pulo {
-    0%   { transform: translateY(0); }
-    40%  { transform: translateY(-6px); }
-    100% { transform: translateY(0); }
+    0% { transform: translateY(0); } 40% { transform: translateY(-6px); } 100% { transform: translateY(0); }
 }
-
-/* "+N" que sobe a partir do carrinho */
 .mais-n {
-    position: fixed;
-    top: 62px;
-    right: 28px;
-    z-index: 31;
-    pointer-events: none;
-    background: var(--cor-sucesso);
-    color: #fff;
-    font-weight: bold;
-    padding: 3px 10px;
-    border-radius: 12px;
-    animation: subir 1s ease forwards;
+    position: fixed; top: 64px; right: 28px; z-index: 31; pointer-events: none;
+    background: var(--cor-sucesso); color: #fff; font-weight: 700;
+    padding: 3px 10px; border-radius: 12px; animation: subir 1s ease forwards;
 }
 @keyframes subir {
-    0%   { opacity: 0; transform: translateY(10px); }
-    20%  { opacity: 1; }
-    100% { opacity: 0; transform: translateY(-26px); }
+    0% { opacity: 0; transform: translateY(10px); } 20% { opacity: 1; } 100% { opacity: 0; transform: translateY(-26px); }
 }
 
-/* Respeita quem desativou animações no sistema */
+/* ---------- Entrada suave dos cartões ---------- */
+.revelar { opacity: 0; }
+.revelar.visivel { opacity: 1; animation: entrar .5s ease backwards; }
+@keyframes entrar { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+
 @media (prefers-reduced-motion: reduce) {
-    .carrinho.bump, #contador.pulo, .mais-n { animation: none; }
+    .carrinho.bump, #contador.pulo, .mais-n, .revelar.visivel { animation: none; }
+    .item, .foto img { transition: none; }
     html { scroll-behavior: auto; }
 }
 
-/* ---------- Celular: controles descem, alinhados à direita ---------- */
+/* ---------- Celular ---------- */
+@media (max-width: 700px) {
+    .categorias { justify-content: flex-start; }
+}
 @media (max-width: 600px) {
-    body { padding: 12px 12px 100px; }
-    .item { flex-wrap: wrap; }
-    .item > div:first-child { flex-basis: 100%; }
-    .item .qtd { width: 100%; justify-content: flex-end; }
+    .hero { padding: 32px 16px 28px; }
+    .lista { padding: 4px 14px 0; }
+    .grade { grid-template-columns: 1fr; gap: 16px; }
+    .item { display: grid; grid-template-columns: 116px 1fr; grid-template-areas: "foto info" "controles controles"; }
+    .foto { grid-area: foto; aspect-ratio: auto; min-height: 150px; }
+    .info { grid-area: info; padding: 14px 14px 6px; }
+    .controles { grid-area: controles; padding: 10px 14px 14px; }
+    .preco-tag { left: 8px; bottom: 8px; padding: 4px 10px; }
+    .preco-tag b { font-size: 14px; }
     .barra button { width: 100%; }
 }
-
-.conta { position: fixed; top: 16px; left: 16px; z-index: 30; display: flex; align-items: center; gap: 10px;
-         background: #fff; padding: 6px 14px; border-radius: 22px; box-shadow: 0 2px 8px rgba(0,0,0,.15);
-         font-size: 14px; }
-.conta a, .conta button { color: #b53a00; font-weight: bold; text-decoration: none; background: none;
-                          border: 0; cursor: pointer; font-size: 14px; padding: 0; }
-.conta a:hover, .conta button:hover { text-decoration: underline; }
-.conta form { margin: 0; }
+@media (max-width: 420px) {
+    .conta > span { display: none; }
+}

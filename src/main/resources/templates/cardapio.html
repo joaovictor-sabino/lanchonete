@@ -2,7 +2,7 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Produtos - Administração</title>
-    <th:block th:replace="~{fragments/admin :: estilo}"></th:block>
+    <th:block th:replace="~{fragments/admin :: estilo}"></th:block>   
 </head>
 <body>
     <header th:replace="~{fragments/admin :: menu('produtos')}"></header>
@@ -21,6 +21,7 @@
                 <thead>
                     <tr>
                         <th>ID</th>
+                        <th>Foto</th>
                         <th>Nome</th>
                         <th>Descrição</th>
                         <th>Preço</th>
@@ -31,6 +32,10 @@
                 <tbody>
                     <tr th:each="produto : ${produtos}">
                         <td th:text="${produto.id}"></td>
+                        <td><img class="mini"
+                                th:src="${!#strings.isEmpty(produto.imagem)} ? @{/uploads/produtos/{f}(f=${produto.imagem})} : @{/img/sem-foto.svg}"
+                                onerror="this.onerror=null;this.src='/img/sem-foto.svg'"
+                                alt=""></td>
                         <td><strong th:text="${produto.nome}"></strong></td>
                         <td th:text="${produto.descricao}"></td>
                         <td th:text="'R$ ' + ${#numbers.formatDecimal(produto.preco, 1, 'POINT', 2, 'COMMA')}"></td>

@@ -5,6 +5,12 @@
     <th:block th:replace="~{fragments/admin :: estilo}"></th:block>
     <link rel="stylesheet" th:href="@{/css/form.css}">
 </head>
+    <script>
+        document.getElementById('arquivoImagem').addEventListener('change', function () {
+            var arquivo = this.files[0];
+            if (arquivo) document.getElementById('previa').src = URL.createObjectURL(arquivo);
+        });
+    </script>
 <body>
     <header th:replace="~{fragments/admin :: menu('produtos')}"></header>
 
@@ -13,7 +19,7 @@
             <h2 th:text="${produto.id == null} ? '🍔 Novo produto' : '✏️ Editar produto'">Produto</h2>
             <p class="subtitulo">Preencha os dados que aparecerão no cardápio.</p>
 
-            <form class="cartao" th:action="@{/admin/produtos/salvar}" th:object="${produto}" method="post">
+                <form class="cartao" th:action="@{/admin/produtos/salvar}" th:object="${produto} "method="post" enctype="multipart/form-data">
                 <div class="form-corpo">
                     <input type="hidden" th:field="*{id}">
 
@@ -40,7 +46,20 @@
                             <option value="Sobremesa">Sobremesa</option>
                         </select>
                     </div>
+                    <div class="secao">Foto</div>
 
+                    <div class="campo">
+                        <div class="foto-atual">
+                            <img id="previa"
+                                th:src="${!#strings.isEmpty(produto.imagem)} ? @{/uploads/produtos/{f}(f=${produto.imagem})} : @{/img/sem-foto.svg}"
+                                alt="Foto do produto">
+                        </div>
+                        <label for="arquivoImagem">Escolher foto (JPG, PNG ou WebP, até 3 MB)</label>
+                        <input type="file" id="arquivoImagem" name="arquivoImagem"
+                            accept="image/jpeg,image/png,image/webp">
+                        <small class="dica">Ideal: vertical 2:3, como 800 × 1200 px.</small>
+                        <p class="erro-img" th:if="${erroImagem != null}" th:text="${erroImagem}"></p>
+                    </div>
                     <div class="secao">Preços</div>
 
                     <div class="grade">

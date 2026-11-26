@@ -11,14 +11,19 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
+
 
 @Controller
 public class ProdutoController {
 
     private final ProdutoService service;
+    private final ArmazenamentoImagemService imagens;
 
-    public ProdutoController(ProdutoService service) {
+    public ProdutoController(ProdutoService service, ArmazenamentoImagemService imagens) {
         this.service = service;
+        this.imagens = imagens;
     }
 
     @GetMapping("/")
@@ -44,8 +49,31 @@ public class ProdutoController {
     }
 
     @PostMapping("/admin/produtos/salvar")
-    public String salvar(@ModelAttribute Produto produto) {
+    public String salvar(@ModelAttribute Produto produto,
+                        @RequestParam(value = "arquivoImagem", required = false) MultipartFile arquivoImagem,
+                        Model model) {
+
+        String imagemAtual = null;
+        if (produto.getId() != null) {
+            imagemAtual = service.buscarPorId(produto.getId()).getImagem();
+        }
+        produto.setImagem(imagemAtual);
+
+        if (arquivoImagem != null && !arquivoImagem.isEmpty()) {
+            try {
+                produto.setImagem(imagens.salvar(arquivoImagem, produto.getNome()));
+            } catch (IllegalArgumentException e) {
+                model.addAttribute("erroImagem", e.getMessage());
+                return "form";
+            }
+        }
+
         service.salvar(produto);
+
+        // só apaga a foto antiga se o nome mudou (ex.: de .png para .jpg)
+        if (imagemAtual != null && !imagemAtual.equals(produto.getImagem())) {
+            imagens.remover(imagemAtual);
+        }
         return "redirect:/admin/produtos";
     }
 
@@ -57,13 +85,15 @@ public class ProdutoController {
 
     @PostMapping("/admin/produtos/excluir/{id}")
     public String excluir(@PathVariable Long id) {
+        String imagem = service.buscarPorId(id).getImagem();
         service.excluir(id);
+        imagens.remover(imagem);
         return "redirect:/admin/produtos";
     }
-    @SuppressWarnings("unchecked")
+    
     private static final List<String> ORDEM_CATEGORIAS =
-    List.of("Hambúrguer", "Acompanhamento", "Bebida", "Sobremesa");
-
+        List.of("Hambúrguer", "Acompanhamento", "Bebida", "Sobremesa");
+@SuppressWarnings("unchecked")
 @GetMapping("/cardapio")
 public String CardapioPublico(Model model, HttpSession session) {
     List<Produto> todos = service.listar();

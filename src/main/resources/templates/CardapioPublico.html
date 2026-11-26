@@ -7,88 +7,118 @@
     <link rel="stylesheet" th:href="@{/css/cardapio-publico.css}">
 </head>
 <body>
-    <div class="conta">
-        <a th:if="${usuarioLogado == null}" th:href="@{/login}">🔐 Entrar</a>
+    <header class="topo">
+        <div class="conta">
+            <a th:if="${usuarioLogado == null}" th:href="@{/login}">🔐 Entrar</a>
+            <th:block th:if="${usuarioLogado != null}">
+                <span th:text="'Olá, ' + ${usuarioLogado}"></span>
+                <a th:if="${ehAdmin}" th:href="@{/admin/produtos}">⚙️ Painel</a>
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit">Sair</button>
+                </form>
+            </th:block>
+        </div>
 
-        <th:block th:if="${usuarioLogado != null}">
-            <span th:text="'Olá, ' + ${usuarioLogado}"></span>
-            <a th:if="${ehAdmin}" th:href="@{/admin/produtos}">⚙️ Painel</a>
-            <form th:action="@{/logout}" method="post">
-                <button type="submit">Sair</button>
-            </form>
-    </th:block>
-    </div>
-    <a class="carrinho" id="pillCarrinho" th:href="@{/carrinho}">🛒 Carrinho (<span id="contador" th:text="${totalItens}">0</span>)</a>
+        <a class="carrinho" id="pillCarrinho" th:href="@{/carrinho}">🛒 Carrinho (<span id="contador" th:text="${totalItens}">0</span>)</a>
+    </header>
 
-    <h1>🍔 Nosso Cardápio</h1>
+    <section class="hero">
+        <p class="hero-sobre">Feito na hora</p>
+        <h1>Nosso Cardápio</h1>
+        <p class="hero-sub">Escolha seus favoritos, ajuste o tamanho e peça em poucos cliques.</p>
+        <a class="acompanhar" th:if="${ultimoPedidoId != null}"
+           th:href="@{/pedido/{id}/confirmado(id=${ultimoPedidoId})}">📦 Acompanhar meu pedido</a>
+    </section>
+
     <nav class="categorias" th:unless="${#maps.isEmpty(categorias)}">
-    <a th:each="e, st : ${categorias}" th:href="'#cat-' + ${st.index}" th:text="${e.key}"></a>
+        <a th:each="e, st : ${categorias}" th:href="'#cat-' + ${st.index}">
+            <span th:switch="${e.key}">
+                <span th:case="'Hambúrguer'">🍔</span>
+                <span th:case="'Acompanhamento'">🍟</span>
+                <span th:case="'Bebida'">🥤</span>
+                <span th:case="'Sobremesa'">🍰</span>
+                <span th:case="*">🍽️</span>
+            </span>
+            <span th:text="${e.key}"></span>
+        </a>
     </nav>
-    <a th:if="${ultimoPedidoId != null}"
-   th:href="@{/pedido/{id}/confirmado(id=${ultimoPedidoId})}">📦 Acompanhar meu pedido</a>
+
     <form id="formCardapio"
-            th:action="@{/carrinho/adicionar-varios}"
-            th:data-ajax="@{/carrinho/adicionar-ajax}"
-            method="post">
-   
-        <div class="lista">
+          th:action="@{/carrinho/adicionar-varios}"
+          th:data-ajax="@{/carrinho/adicionar-ajax}"
+          method="post">
 
-            <h2 th:unless="${#lists.isEmpty(comidas)}">🍔 Comidas</h2>
+        <main class="lista">
+            <p class="vazio" th:if="${#maps.isEmpty(categorias)}">Nenhum produto cadastrado.</p>
 
-        <th:block th:each="e, st : ${categorias}">
+            <section class="secao-cat" th:each="e, st : ${categorias}">
+                <h2 th:id="'cat-' + ${st.index}">
+                    <span th:switch="${e.key}">
+                        <span th:case="'Hambúrguer'">🍔</span>
+                        <span th:case="'Acompanhamento'">🍟</span>
+                        <span th:case="'Bebida'">🥤</span>
+                        <span th:case="'Sobremesa'">🍰</span>
+                        <span th:case="*">🍽️</span>
+                    </span>
+                    <span th:text="${e.key}"></span>
+                </h2>
 
-            <h2 th:id="'cat-' + ${st.index}">
-        <span th:switch="${e.key}">
-            <span th:case="'Hambúrguer'">🍔</span>
-            <span th:case="'Acompanhamento'">🍟</span>
-            <span th:case="'Bebida'">🥤</span>
-            <span th:case="'Sobremesa'">🍰</span>
-            <span th:case="*">🍽️</span>
-        </span>
-        <span th:text="${e.key}"></span>
-        </h2>
+                <div class="grade">
+                    <article class="item" th:each="p : ${e.value}">
 
-        <div class="item" th:each="p : ${e.value}">
-        <div>
-            <div class="nome" th:text="${p.nome}"></div>
-            <div class="desc" th:text="${p.descricao}"></div>
-            <div class="preco"
-                 th:if="${p.precoM == null and p.precoG == null}"
-                 th:text="${p.preco != null} ? 'R$ ' + ${#numbers.formatDecimal(p.preco, 1, 'POINT', 2, 'COMMA')} : ''"></div>
-        </div>
-        <div class="qtd">
-            <div class="tamanhos" th:if="${p.precoM != null or p.precoG != null}">
-            <label>
-                <input type="radio" th:name="'tam_' + ${p.id}" value="P" checked>
-                <span>P<small th:text="'R$ ' + ${#numbers.formatDecimal(p.preco, 1, 'POINT', 2, 'COMMA')}"></small></span>
-            </label>
-            <label th:if="${p.precoM != null}">
-                <input type="radio" th:name="'tam_' + ${p.id}" value="M">
-                <span>M<small th:text="'R$ ' + ${#numbers.formatDecimal(p.precoM, 1, 'POINT', 2, 'COMMA')}"></small></span>
-            </label>
-            <label th:if="${p.precoG != null}">
-                <input type="radio" th:name="'tam_' + ${p.id}" value="G">
-                <span>G<small th:text="'R$ ' + ${#numbers.formatDecimal(p.precoG, 1, 'POINT', 2, 'COMMA')}"></small></span>
-            </label>
-        </div>
-            <button type="button" onclick="mudar(this, -1)">-</button>
-            <input type="number" th:name="'qtd_' + ${p.id}" value="0" min="0" max="20">
-            <button type="button" onclick="mudar(this, 1)">+</button>
-        </div>
-    </div>
+                        <div class="foto">
+                            <img th:src="${!#strings.isEmpty(p.imagem)} ? @{/uploads/produtos/{f}(f=${p.imagem})} : @{/img/sem-foto.svg}"
+                                 th:alt="${p.nome}" loading="lazy"
+                                 onerror="this.onerror=null;this.src='/img/sem-foto.svg'">
+                            <span class="preco-tag" th:if="${p.preco != null}">
+                                <small th:if="${p.precoM != null or p.precoG != null}">a partir de</small>
+                                <b th:text="'R$ ' + ${#numbers.formatDecimal(p.preco, 1, 'POINT', 2, 'COMMA')}"></b>
+                            </span>
+                        </div>
 
-</th:block>
+                        <div class="info">
+                            <h3 class="nome" th:text="${p.nome}"></h3>
+                            <p class="desc" th:text="${p.descricao}"></p>
+                        </div>
 
-        </div>
+                        <div class="controles">
+                            <div class="tamanhos" th:if="${p.precoM != null or p.precoG != null}">
+                                <label>
+                                    <input type="radio" th:name="'tam_' + ${p.id}" value="P" checked>
+                                    <span>P<small th:text="'R$ ' + ${#numbers.formatDecimal(p.preco, 1, 'POINT', 2, 'COMMA')}"></small></span>
+                                </label>
+                                <label th:if="${p.precoM != null}">
+                                    <input type="radio" th:name="'tam_' + ${p.id}" value="M">
+                                    <span>M<small th:text="'R$ ' + ${#numbers.formatDecimal(p.precoM, 1, 'POINT', 2, 'COMMA')}"></small></span>
+                                </label>
+                                <label th:if="${p.precoG != null}">
+                                    <input type="radio" th:name="'tam_' + ${p.id}" value="G">
+                                    <span>G<small th:text="'R$ ' + ${#numbers.formatDecimal(p.precoG, 1, 'POINT', 2, 'COMMA')}"></small></span>
+                                </label>
+                            </div>
+
+                            <div class="qtd">
+                                <span class="rotulo">Quantidade</span>
+                                <div class="stepper">
+                                    <button type="button" onclick="mudar(this, -1)">-</button>
+                                    <input type="number" th:name="'qtd_' + ${p.id}" value="0" min="0" max="20">
+                                    <button type="button" onclick="mudar(this, 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </article>
+                </div>
+            </section>
+        </main>
 
         <div class="barra">
             <button type="submit" id="btnAdicionar">Adicionar selecionados ao carrinho</button>
         </div>
-
-        
     </form>
 
     <div id="toast" class="toast"></div>
+
 
     <script>
         function mudar(botao, delta) {
@@ -189,6 +219,21 @@ form.addEventListener('submit', function (e) {
         botaoAdd.textContent = textoOriginal;
     });
 });
+    // cartões aparecem suavemente ao rolar a página
+    if ('IntersectionObserver' in window) {
+        var observador = new IntersectionObserver(function (entradas) {
+            entradas.forEach(function (en) {
+                if (en.isIntersecting) {
+                    en.target.classList.add('visivel');
+                    observador.unobserve(en.target);
+                }
+            });
+        }, { threshold: 0.12 });
+        document.querySelectorAll('.item').forEach(function (el) {
+            el.classList.add('revelar');
+            observador.observe(el);
+        });
+    }
     </script>
 </body>
 </html>

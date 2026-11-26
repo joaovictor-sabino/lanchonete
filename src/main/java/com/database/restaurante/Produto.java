@@ -19,7 +19,10 @@ public class Produto {
     private BigDecimal precoM;
     private BigDecimal precoG;
     private String categoria;
+    private String imagem;   // nome do arquivo salvo em uploads/produtos
 
+    public String getImagem() { return imagem; }
+    public void setImagem(String imagem) { this.imagem = imagem; }
     public Produto() {}
 
     public Long getId() { return id; }

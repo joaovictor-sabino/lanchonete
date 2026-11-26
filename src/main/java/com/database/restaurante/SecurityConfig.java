@@ -28,9 +28,7 @@ public class SecurityConfig {
                 .defaultSuccessUrl("/cardapio", false)   // false: volta para a página que ele tentou abrir
                 .permitAll())
             .logout(l -> l
-                .logoutSuccessUrl("/cardapio"))
-            .exceptionHandling(e -> e
-                .accessDeniedPage("/cardapio"));          // logado, mas sem ser admin
+                .logoutSuccessUrl("/cardapio"));
 
         return http.build();
     }

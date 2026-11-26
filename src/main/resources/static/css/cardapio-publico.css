@@ -255,3 +255,5 @@ body {
 @media (max-width: 420px) {
     .conta > span { display: none; }
 }
+
+@media (max-width: 520px) { .conta .extra { display: none; } }

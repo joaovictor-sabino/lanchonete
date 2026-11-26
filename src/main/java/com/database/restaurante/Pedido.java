@@ -12,6 +12,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
 @Entity
@@ -100,12 +102,19 @@ public class Pedido {
     public void setItens(List<ItemPedido> itens) { this.itens = itens; }
 
     @Enumerated(EnumType.STRING)
-private StatusPedido status = StatusPedido.NOVO;
+    private StatusPedido status = StatusPedido.NOVO;
 
-public StatusPedido getStatus() {
-    // pedidos antigos, criados antes desta coluna existir, vêm com null
-    return status == null ? StatusPedido.NOVO : status;
-}
-public void setStatus(StatusPedido status) { this.status = status; }
+    public StatusPedido getStatus() {
+        // pedidos antigos, criados antes desta coluna existir, vêm com null
+        return status == null ? StatusPedido.NOVO : status;
+    }
+    public void setStatus(StatusPedido status) { this.status = status; }
+
+    @ManyToOne
+    @JoinColumn(name = "cliente_id")
+    private Usuario cliente;   // vazio quando o pedido é de convidado
+
+    public Usuario getCliente() { return cliente; }
+    public void setCliente(Usuario cliente) { this.cliente = cliente; }
 }
 

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="refresh" content="20" th:if="${temAtivo}">
+    <title>Meus pedidos</title>
+    <link rel="stylesheet" th:href="@{/css/meus-pedidos.css}">
+</head>
+<body>
+    <header class="topo">
+        <a th:href="@{/cardapio}">← Voltar ao cardápio</a>
+        <form th:action="@{/logout}" method="post"><button type="submit">Sair</button></form>
+    </header>
+
+    <main class="conteudo">
+        <h1>📦 Meus pedidos</h1>
+        <p class="sub" th:if="${temAtivo}">Esta página se atualiza sozinha a cada 20 segundos.</p>
+
+        <p class="vazio" th:if="${#lists.isEmpty(pedidos)}">
+            Você ainda não fez nenhum pedido. <a th:href="@{/cardapio}">Ver cardápio</a>
+        </p>
+
+        <article class="pedido" th:each="p : ${pedidos}">
+            <div class="pedido-topo">
+                <strong th:text="'Pedido nº ' + ${p.id}"></strong>
+                <span class="data" th:text="${#temporals.format(p.criadoEm, 'dd/MM/yyyy HH:mm')}"></span>
+                <span class="etiqueta" th:classappend="'st-' + ${p.status.name()}" th:text="${p.status.descricao}"></span>
+            </div>
+
+            <!-- linha de progresso -->
+            <ol class="etapas" th:unless="${p.status.name() == 'CANCELADO'}">
+                <li th:each="s : ${etapas}"
+                    th:classappend="${s.ordinal() <= p.status.ordinal()} ? (${s == p.status} ? 'feita atual' : 'feita')"
+                    th:text="${s.descricao}"></li>
+            </ol>
+            <p class="cancelado" th:if="${p.status.name() == 'CANCELADO'}">Este pedido foi cancelado.</p>
+
+            <p class="mensagem" th:switch="${p.status.name()}">
+                <span th:case="'NOVO'">Recebemos seu pedido e logo começaremos o preparo.</span>
+                <span th:case="'EM_PREPARO'">Seu pedido está sendo preparado.</span>
+                <span th:case="'PRONTO'"
+                      th:text="${p.entrega} ? 'Pronto! Vai sair para entrega.' : 'Pronto! Pode retirar no balcão.'"></span>
+                <span th:case="'FINALIZADO'"
+                      th:text="${p.entrega} ? 'Pedido entregue. Bom apetite!' : 'Pedido retirado. Bom apetite!'"></span>
+                <span th:case="*"></span>
+            </p>
+
+            <p class="recebimento">
+                <strong th:text="${p.entrega} ? '🛵 Entrega em:' : '🏪 Retirada no local'"></strong>
+                <span th:if="${p.entrega}"
+                      th:text="${p.rua} + ', ' + ${p.numero} + ' - ' + ${p.bairro} + ', ' + ${p.cidade}"></span>
+            </p>
+
+            <ul class="itens">
+                <li th:each="i : ${p.itens}">
+                    <span th:text="${i.quantidade} + 'x ' + ${i.nomeProduto}"></span>
+                    <strong th:if="${i.tamanho != 'U'}" th:text="'(' + ${i.tamanho} + ')'"></strong>
+                </li>
+            </ul>
+
+            <div class="total" th:text="'Total: R$ ' + ${#numbers.formatDecimal(p.total, 1, 'POINT', 2, 'COMMA')}"></div>
+        </article>
+    </main>
+</body>
+</html>

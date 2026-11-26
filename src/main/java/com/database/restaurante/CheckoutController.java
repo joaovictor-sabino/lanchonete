@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,9 +21,11 @@ public class CheckoutController {
     private static final String SESSAO_ULTIMO_PEDIDO = "ultimoPedidoId";
 
     private final PedidoService pedidoService;
+    private final UsuarioRepository usuarios;
 
-    public CheckoutController(PedidoService pedidoService) {
+    public CheckoutController(PedidoService pedidoService, UsuarioRepository usuarios) {
         this.pedidoService = pedidoService;
+        this.usuarios = usuarios;
     }
 
     @SuppressWarnings("unchecked")
@@ -39,8 +43,16 @@ public class CheckoutController {
         model.addAttribute("total", total);
     }
 
+    // devolve o usuário logado, ou null se for convidado
+    private Usuario clienteLogado(Authentication auth) {
+        if (auth == null || auth instanceof AnonymousAuthenticationToken) {
+            return null;
+        }
+        return usuarios.findByUsername(auth.getName()).orElse(null);
+    }
+
     @GetMapping("/checkout")
-    public String checkout(HttpSession session, Model model) {
+    public String checkout(HttpSession session, Model model, Authentication auth) {
         Map<String, Integer> carrinho = carrinhoDaSessao(session);
         if (carrinhoVazio(carrinho)) {
             return "redirect:/carrinho";
@@ -49,14 +61,23 @@ public class CheckoutController {
         if (itens.isEmpty()) {
             return "redirect:/carrinho";
         }
+
+        // se estiver logado, já vem com nome e telefone preenchidos
+        CheckoutForm form = new CheckoutForm();
+        Usuario cliente = clienteLogado(auth);
+        if (cliente != null) {
+            form.setNomeCliente(cliente.getNome());
+            form.setTelefone(cliente.getTelefone());
+        }
+
         preencherResumo(model, itens);
-        model.addAttribute("form", new CheckoutForm());
+        model.addAttribute("form", form);
         return "checkout";
     }
 
     @PostMapping("/checkout/confirmar")
     public String confirmar(@ModelAttribute("form") CheckoutForm form,
-                            HttpSession session, Model model) {
+                            HttpSession session, Model model, Authentication auth) {
         Map<String, Integer> carrinho = carrinhoDaSessao(session);
         if (carrinhoVazio(carrinho)) {
             return "redirect:/carrinho";
@@ -73,7 +94,8 @@ public class CheckoutController {
             return "checkout";
         }
 
-        Pedido pedido = pedidoService.criarPedido(form, itens);
+        // o terceiro argumento é o cliente logado (ou null, se for convidado)
+        Pedido pedido = pedidoService.criarPedido(form, itens, clienteLogado(auth));
 
         carrinho.clear();
         session.setAttribute(SESSAO_ULTIMO_PEDIDO, pedido.getId());

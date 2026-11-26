@@ -63,6 +63,7 @@
         </div>
 
         <a class="voltar" th:href="@{/cardapio}">Voltar ao cardápio</a>
+        <a class="voltar" th:if="${usuarioLogado != null}" th:href="@{/minha-conta/pedidos}">Ver meus pedidos</a>
     </div>
 </body>
 </html>

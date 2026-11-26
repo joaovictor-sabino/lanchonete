@@ -10,7 +10,7 @@
     <main class="login-box">
         <h1>🍔 Entrar</h1>
         <p class="erro" th:if="${param.error}">Usuário ou senha inválidos.</p>
-
+        <p class="ok" th:if="${param.cadastrado}">Conta criada! Entre para continuar.</p>
         <form th:action="@{/login}" method="post">
             <label for="username">Usuário</label>
             <input type="text" id="username" name="username" required autofocus>
@@ -20,7 +20,7 @@
 
             <button type="submit">Entrar</button>
         </form>
-
+        <p class="alt">Não tem conta? <a th:href="@{/cadastro}">Criar conta</a></p>
         <a class="voltar" th:href="@{/cardapio}">← Voltar ao cardápio</a>
     </main>
 </body>

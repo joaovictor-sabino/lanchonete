@@ -68,8 +68,9 @@ public class PedidoService {
     }
 
     @Transactional
-    public Pedido criarPedido(CheckoutForm form, List<ItemCarrinho> itens) {
+    public Pedido criarPedido(CheckoutForm form, List<ItemCarrinho> itens, Usuario cliente) {
         Pedido pedido = new Pedido();
+        pedido.setCliente(cliente);
         pedido.setNomeCliente(form.getNomeCliente().trim());
         pedido.setTelefone(somenteDigitos(form.getTelefone()));
         pedido.setTipoEntrega(form.getTipoEntrega());
@@ -107,6 +108,10 @@ public class PedidoService {
             .orElseThrow(() -> new IllegalArgumentException("Pedido não encontrado: " + id));
     }
 
+    public List<Pedido> listarDoCliente(String username) {
+    return pedidoRepository.findByClienteUsernameOrderByCriadoEmDesc(username);
+    }
+
     private static boolean vazio(String s) {
         return s == null || s.isBlank();
     }
@@ -124,12 +129,12 @@ public class PedidoService {
         return pedidoRepository.findAllByOrderByCriadoEmDesc();
     }
     return pedidoRepository.findByStatusOrderByCriadoEmDesc(filtro);
-}
+    }
 
-@Transactional
-public void atualizarStatus(Long id, StatusPedido novoStatus) {
-    Pedido pedido = buscarPorId(id);
-    pedido.setStatus(novoStatus);
-    pedidoRepository.save(pedido);
-}
+    @Transactional
+    public void atualizarStatus(Long id, StatusPedido novoStatus) {
+        Pedido pedido = buscarPorId(id);
+        pedido.setStatus(novoStatus);
+        pedidoRepository.save(pedido);
+    }
 }

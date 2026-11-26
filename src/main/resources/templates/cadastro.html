@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Criar conta</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+</head>
+<body>
+    <main class="login-box">
+        <h1>Criar conta</h1>
+        <p class="sub">Acompanhe o status dos seus pedidos.</p>
+
+        <div class="erro" th:if="${erros != null}">
+            <ul>
+                <li th:each="e : ${erros}" th:text="${e}"></li>
+            </ul>
+        </div>
+
+        <form th:action="@{/cadastro}" th:object="${form}" method="post">
+            <label for="nome">Nome</label>
+            <input type="text" id="nome" th:field="*{nome}" maxlength="100" required autofocus>
+
+            <label for="email">E-mail</label>
+            <input type="email" id="email" th:field="*{email}" maxlength="150" required>
+
+            <label for="telefone">Telefone com DDD (opcional)</label>
+            <input type="tel" id="telefone" th:field="*{telefone}" maxlength="20">
+
+            <label for="senha">Senha (mínimo 8 caracteres)</label>
+            <input type="password" id="senha" th:field="*{senha}" minlength="8" maxlength="72"
+                   autocomplete="new-password" required>
+
+            <label for="confirmarSenha">Confirmar senha</label>
+            <input type="password" id="confirmarSenha" th:field="*{confirmarSenha}" minlength="8" maxlength="72"
+                   autocomplete="new-password" required>
+
+            <button type="submit">Criar conta</button>
+        </form>
+
+        <p class="alt">Já tem conta? <a th:href="@{/login}">Entrar</a></p>
+        <a class="voltar" th:href="@{/cardapio}">← Voltar ao cardápio</a>
+    </main>
+</body>
+</html>

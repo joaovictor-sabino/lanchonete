@@ -9,9 +9,14 @@
 <body>
     <header class="topo">
         <div class="conta">
-            <a th:if="${usuarioLogado == null}" th:href="@{/login}">🔐 Entrar</a>
+            <th:block th:if="${usuarioLogado == null}">
+                <a th:href="@{/login}">🔐 Entrar</a>
+                <a class="extra" th:href="@{/cadastro}">Criar conta</a>
+            </th:block>
+
             <th:block th:if="${usuarioLogado != null}">
                 <span th:text="'Olá, ' + ${usuarioLogado}"></span>
+                <a th:if="${!ehAdmin}" th:href="@{/minha-conta/pedidos}">📦 Meus pedidos</a>
                 <a th:if="${ehAdmin}" th:href="@{/admin/produtos}">⚙️ Painel</a>
                 <form th:action="@{/logout}" method="post">
                     <button type="submit">Sair</button>

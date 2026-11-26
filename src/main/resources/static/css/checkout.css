@@ -137,3 +137,6 @@ a.voltar:focus-visible, button:focus-visible {
     .botoes { flex-direction: column; }
     .botoes a, .botoes button { display: block; width: 100%; text-align: center; }
 }
+
+.aviso-conta { background: #fff3e0; color: #7a4b00; padding: 10px 14px; border-radius: 8px; margin: 0 0 14px; }
+.aviso-conta a { color: #b53a00; font-weight: 700; }

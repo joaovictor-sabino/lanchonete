@@ -8,7 +8,10 @@
 </head>
 <body>
     <h1>Finalizar pedido</h1>
-
+    <p class="aviso-conta" th:if="${usuarioLogado == null}">
+    Quer acompanhar o status do pedido?
+    <a th:href="@{/login}">Entre</a> ou <a th:href="@{/cadastro}">crie uma conta</a> antes de confirmar.
+    </p>
     <div class="conteudo">
         <div class="erros" th:if="${erros != null}">
             <ul>

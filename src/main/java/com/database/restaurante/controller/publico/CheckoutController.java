@@ -1,4 +1,4 @@
-package com.database.restaurante;
+package com.database.restaurante.controller.publico;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -12,6 +12,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import com.database.restaurante.dto.CheckoutForm;
+import com.database.restaurante.dto.ItemCarrinho;
+import com.database.restaurante.model.Pedido;
+import com.database.restaurante.model.Usuario;
+import com.database.restaurante.repository.UsuarioRepository;
+import com.database.restaurante.service.PedidoService;
 
 import jakarta.servlet.http.HttpSession;
 

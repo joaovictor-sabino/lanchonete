@@ -1,4 +1,4 @@
-package com.database.restaurante;
+package com.database.restaurante.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -8,6 +8,16 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.database.restaurante.dto.CheckoutForm;
+import com.database.restaurante.dto.ItemCarrinho;
+import com.database.restaurante.model.ItemPedido;
+import com.database.restaurante.model.Pedido;
+import com.database.restaurante.model.Produto;
+import com.database.restaurante.model.StatusPedido;
+import com.database.restaurante.model.TipoEntrega;
+import com.database.restaurante.model.Usuario;
+import com.database.restaurante.repository.PedidoRepository;
 
 @Service
 public class PedidoService {

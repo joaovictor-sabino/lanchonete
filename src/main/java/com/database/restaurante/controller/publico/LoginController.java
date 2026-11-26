@@ -1,4 +1,4 @@
-package com.database.restaurante;
+package com.database.restaurante.controller.publico;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

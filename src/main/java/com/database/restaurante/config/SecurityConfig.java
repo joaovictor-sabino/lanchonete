@@ -1,4 +1,4 @@
-package com.database.restaurante;
+package com.database.restaurante.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

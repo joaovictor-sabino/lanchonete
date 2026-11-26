@@ -1,7 +1,11 @@
-package com.database.restaurante;
+package com.database.restaurante.service;
 
 import java.util.List;
+
 import org.springframework.stereotype.Service;
+
+import com.database.restaurante.model.Produto;
+import com.database.restaurante.repository.ProdutoRepository;
 
 @Service
 public class ProdutoService {

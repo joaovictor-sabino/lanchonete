@@ -1,6 +1,8 @@
-package com.database.restaurante;
+package com.database.restaurante.dto;
 
 import java.math.BigDecimal;
+
+import com.database.restaurante.model.Produto;
 
 public class ItemCarrinho {
 

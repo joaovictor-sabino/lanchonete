@@ -1,4 +1,6 @@
-package com.database.restaurante;
+package com.database.restaurante.dto;
+
+import com.database.restaurante.model.TipoEntrega;
 
 public class CheckoutForm {
 

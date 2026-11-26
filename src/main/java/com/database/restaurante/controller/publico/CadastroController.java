@@ -1,4 +1,4 @@
-package com.database.restaurante;
+package com.database.restaurante.controller.publico;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +11,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import com.database.restaurante.dto.CadastroForm;
+import com.database.restaurante.model.Usuario;
+import com.database.restaurante.repository.UsuarioRepository;
 
 @Controller
 public class CadastroController {

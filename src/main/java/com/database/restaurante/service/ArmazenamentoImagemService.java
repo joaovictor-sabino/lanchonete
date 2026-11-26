@@ -1,4 +1,4 @@
-package com.database.restaurante;
+package com.database.restaurante.service;
 
 import java.io.IOException;
 import java.nio.file.Files;

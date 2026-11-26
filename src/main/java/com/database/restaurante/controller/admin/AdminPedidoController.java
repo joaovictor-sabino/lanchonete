@@ -1,4 +1,4 @@
-package com.database.restaurante;
+package com.database.restaurante.controller.admin;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -13,6 +13,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.database.restaurante.model.Pedido;
+import com.database.restaurante.model.StatusPedido;
+import com.database.restaurante.service.PedidoService;
 
 @Controller
 public class AdminPedidoController {

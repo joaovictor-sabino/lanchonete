@@ -1,4 +1,4 @@
-package com.database.restaurante;
+package com.database.restaurante.controller.publico;
 
 import java.util.List;
 
@@ -6,6 +6,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import com.database.restaurante.model.Pedido;
+import com.database.restaurante.model.StatusPedido;
+import com.database.restaurante.service.PedidoService;
 
 @Controller
 public class MinhaContaController {

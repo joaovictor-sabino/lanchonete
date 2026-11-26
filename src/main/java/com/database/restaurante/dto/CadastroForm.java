@@ -1,4 +1,4 @@
-package com.database.restaurante;
+package com.database.restaurante.dto;
 
 public class CadastroForm {
 

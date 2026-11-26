@@ -1,9 +1,12 @@
-package com.database.restaurante;
+package com.database.restaurante.repository;
 
 import java.util.List;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.database.restaurante.model.Pedido;
+import com.database.restaurante.model.StatusPedido;
 
 public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 

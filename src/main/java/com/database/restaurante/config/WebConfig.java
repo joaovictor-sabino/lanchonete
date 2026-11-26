@@ -1,8 +1,11 @@
-package com.database.restaurante;
+package com.database.restaurante.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import com.database.restaurante.service.ArmazenamentoImagemService;
+
 import org.springframework.http.CacheControl;
 
 

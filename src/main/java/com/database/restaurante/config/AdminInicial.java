@@ -1,9 +1,12 @@
-package com.database.restaurante;
+package com.database.restaurante.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import com.database.restaurante.model.Usuario;
+import com.database.restaurante.repository.UsuarioRepository;
 
 @Component
 public class AdminInicial implements CommandLineRunner {

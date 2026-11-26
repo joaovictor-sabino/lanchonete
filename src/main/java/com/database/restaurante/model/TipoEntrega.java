@@ -1,4 +1,4 @@
-package com.database.restaurante;
+package com.database.restaurante.model;
 
 public enum TipoEntrega {
     RETIRADA("Retirar no local"),
